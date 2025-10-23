@@ -1,0 +1,17 @@
+id,name,category,kategorija,material,materijal,size,price,in_stock,image_file
+1,šalica01,cups,šalice,black clay,crna glina,10x20 cm,25€,yes,šalica01.JPG
+2,tanjurić01,plates,tanjurići,white clay,bijela glina,10x20 cm,25€,yes,tanjurić01.JPG
+3,šalica02,cups,šalice,red clay,crvena glina,5x10 cm,10€,yes,šalica02.JPG
+4,šalica03,cups,šalice,black clay,crna glina,10x15 cm,10€,yes,šalica03.JPG
+5,zdjelica01,bowls,zdjelice,white clay,bijela glina,10x15 cm,25€,yes,zdjelica01.JPG
+6,tanjurić02,plates,tanjurići,red clay,crvena glina,20x25 cm,15€,yes,tanjurić02.JPG
+7,zdjelica02,bowls,zdjelice,black clay,crna glina,10x20 cm,25€,yes,zdjelica02.JPG
+8,val01,waves,valovi,white clay,bijela glina,5x10 cm,20€,yes,val01.JPG
+9,val02,waves,valovi,red clay,crvena glina,10x15 cm,25€,yes,val02.JPG
+10,val03,waves,valovi,red clay,crvena glina,5x10 cm,40€,yes,val03.JPG
+11,tanjurić03,plates,tanjurići,red clay,crvena glina,20x25 cm,15€,yes,tanjurić03.JPG
+12,tanjurić04,plates,tanjurići,red clay,crvena glina,20x25 cm,15€,yes,tanjurić04.JPG
+13,svijećnjak01,candle holders,svijećnjaci,black clay,crna glina,10x20 cm,25€,yes,svijećnjak01.JPG
+14,svijećnjak02,candle holders,svijećnjaci,white clay,bijela glina,5x10 cm,20€,yes,svijećnjak02.JPG
+15,svijećnjak03,candle holders,svijećnjaci,red clay,crvena glina,10x15 cm,25€,yes,svijećnjak03.JPG
+16,zdjelica03,bowls,zdjelice,black clay,crna glina,10x20 cm,25€,yes,zdjelica03.jpg
