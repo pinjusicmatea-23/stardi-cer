@@ -578,7 +578,10 @@ p {
     .card-content {
         padding: 50px 20px;
         min-height: 250px;
-        margin: 0;
+        min-width: auto;
+        width: 90vw;
+        max-width: 500px;
+        margin: 0 auto;
         border: 3px dotted #9D8663;
         border-radius: 25px;
     }
