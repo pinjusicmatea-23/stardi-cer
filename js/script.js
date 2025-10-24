@@ -202,12 +202,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Update local time
-    updateLocalTime();
-    setInterval(updateLocalTime, 1000);
+    // Local time functionality removed - replaced with static address/hours
     
     // Initialize scroll-based animations
     initScrollAnimations();
+    
+    // Make sure philosophy section is visible
+    ensurePhilosophySectionVisible();
+    
+    // Initialize inspirations gallery
+    initInspirationGallery();
+    
+    // Initialize shop functionality AFTER DOM is ready
+    setTimeout(() => {
+        initShopSlider();
+        initAboutSlider();
+        // Gallery functionality handled by simple-gallery.js
+    }, 100);
     
     // Add scroll event listener for header behavior
     let lastScrollY = window.scrollY;
@@ -227,27 +238,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // If in main hero section - transparent header with white text
-        if (inMainHero) {
+        // Always transparent header when scrolling
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            // Scrolling down - hide header
+            header.style.transform = 'translateY(-100%)';
+        }
+        else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
+            // Scrolling up or at top - show header with transparent background
             header.style.transform = 'translateY(0)';
             header.style.backgroundColor = 'transparent';
             header.style.backdropFilter = 'none';
-            header.querySelector('.logo h1').style.color = '#f8f8f8';
-            header.querySelectorAll('.menu-line').forEach(line => {
-                line.style.backgroundColor = '#f8f8f8';
-            });
-        }
-        // Everywhere else - always black text with white background
-        else {
-            if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                // Scrolling down - hide header
-                header.style.transform = 'translateY(-100%)';
-            }
-            else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
-                // Scrolling up or at top - show header with white background and black text
-                header.style.transform = 'translateY(0)';
-                header.style.backgroundColor = 'rgba(248, 248, 248, 0.98)';
-                header.style.backdropFilter = 'blur(15px)';
+            
+            // Adjust text color based on section for visibility
+            if (inMainHero) {
+                // White text in main hero
+                header.querySelector('.logo h1').style.color = '#f8f8f8';
+                header.querySelectorAll('.menu-line').forEach(line => {
+                    line.style.backgroundColor = '#f8f8f8';
+                });
+            } else {
+                // Black text in other sections
                 header.querySelector('.logo h1').style.color = '#2c2c2c';
                 header.querySelectorAll('.menu-line').forEach(line => {
                     line.style.backgroundColor = '#2c2c2c';
@@ -262,21 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
     highlightActiveNavigation();
 });
 
-// Update local time function
-function updateLocalTime() {
-    const timeElement = document.getElementById('local-time');
-    if (timeElement) {
-        const now = new Date();
-        const formattedTime = now.getFullYear() + '-' + 
-            String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-            String(now.getDate()).padStart(2, '0') + ' ' + 
-            String(now.getHours()).padStart(2, '0') + ':' + 
-            String(now.getMinutes()).padStart(2, '0') + ':' + 
-            String(now.getSeconds()).padStart(2, '0');
-        
-        timeElement.textContent = formattedTime;
-    }
-}
+// Local time function removed - replaced with static address and working hours
 
 // Scroll-based animations
 function initScrollAnimations() {
@@ -295,7 +291,7 @@ function initScrollAnimations() {
     }, observerOptions);
     
     // Add animation to elements
-    const animatedElements = document.querySelectorAll('.philosophy-content, .way-content, .category, .dialogue-content, .waiting-content');
+    const animatedElements = document.querySelectorAll('.card-item, .philosophy-content, .way-content, .category, .dialogue-content, .waiting-content');
     
     animatedElements.forEach(element => {
         element.style.opacity = '0';
@@ -335,7 +331,399 @@ function highlightActiveNavigation() {
     updateActiveNav(); // Call once to set initial state
 }
 
-// Add CSS for active navigation state
+// Shop horizontal slider
+function initShopSlider() {
+    console.log('Initializing shop slider...');
+    const slides = document.querySelectorAll('.shop-slide');
+    const prevBtn = document.querySelector('.slider-prev');
+    const nextBtn = document.querySelector('.slider-next');
+    
+    console.log('Found slides:', slides.length, 'Prev btn:', !!prevBtn, 'Next btn:', !!nextBtn);
+    
+    if (!slides.length) {
+        console.warn('No shop slides found!');
+        return;
+    }
+    
+    let currentSlide = 0;
+    
+    function updateSlider() {
+        // Clear any inline styles and update slides with proper state management
+        slides.forEach((slide, index) => {
+            slide.style.transform = '';
+            slide.style.opacity = '';
+            slide.style.visibility = '';
+            slide.classList.remove('active', 'prev', 'next');
+            
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            } else {
+                // Handle circular logic for proper slide directions
+                const isLoopingForward = currentSlide === 0 && index === slides.length - 1;
+                const isLoopingBackward = currentSlide === slides.length - 1 && index === 0;
+                
+                if (isLoopingForward) {
+                    // When CUPS is active, WAVES should be positioned as "prev" (left side for left arrow)
+                    slide.classList.add('prev');
+                } else if (isLoopingBackward) {
+                    // When WAVES is active, CUPS should be positioned as "next" (right side for right arrow)
+                    slide.classList.add('next');
+                } else if (index < currentSlide) {
+                    slide.classList.add('prev');
+                } else {
+                    slide.classList.add('next');
+                }
+            }
+        });
+        
+        // Arrows are always active since we have infinite loop
+        if (prevBtn) prevBtn.style.opacity = '1';
+        if (nextBtn) nextBtn.style.opacity = '1';
+    }
+    
+    let isTransitioning = false;
+    
+    function nextSlide() {
+        if (!isTransitioning) {
+            isTransitioning = true;
+            const nextIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
+            currentSlide = nextIndex;
+            updateSlider();
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 800);
+        }
+    }
+    
+    function prevSlide() {
+        if (!isTransitioning) {
+            isTransitioning = true;
+            const prevIndex = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
+            currentSlide = prevIndex;
+            updateSlider();
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 800);
+        }
+    }
+    
+    // Event listeners
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const shopSection = document.querySelector('.shop');
+        if (!shopSection) return;
+        
+        const rect = shopSection.getBoundingClientRect();
+        const isVisible = rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5;
+        
+        if (!isVisible) return;
+        
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            nextSlide();
+        }
+    });
+    
+    // Touch/swipe support
+    let startX = 0;
+    let startY = 0;
+    
+    const shopSlider = document.querySelector('.shop-slider');
+    
+    if (shopSlider) {
+        shopSlider.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+        
+        shopSlider.addEventListener('touchend', function(e) {
+            if (!startX || !startY) return;
+            
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+            
+            // Only respond to horizontal swipes
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left - next slide
+                    nextSlide();
+                } else {
+                    // Swipe right - previous slide
+                    prevSlide();
+                }
+            }
+            
+            startX = 0;
+            startY = 0;
+        });
+    }
+    
+    // Initialize
+    updateSlider();
+    console.log('Shop slider initialized successfully');
+}
+
+// About slider functionality
+function initAboutSlider() {
+    console.log('Initializing about slider...');
+    const aboutSlides = document.querySelectorAll('.about-slide');
+    const aboutPrevBtn = document.querySelector('.about-slider-container .slider-prev');
+    const aboutNextBtn = document.querySelector('.about-slider-container .slider-next');
+    
+    console.log('Found about slides:', aboutSlides.length, 'Prev btn:', !!aboutPrevBtn, 'Next btn:', !!aboutNextBtn);
+    
+    if (!aboutSlides.length || !aboutPrevBtn || !aboutNextBtn) {
+        console.warn('About slider elements not found!');
+        return;
+    }
+    
+    let currentAboutSlide = 0;
+    
+    function updateAboutSlider() {
+        aboutSlides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentAboutSlide) {
+                slide.classList.add('active');
+            }
+        });
+        console.log('About slider updated to slide:', currentAboutSlide);
+    }
+    
+    // Previous slide
+    aboutPrevBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('About prev clicked');
+        currentAboutSlide = currentAboutSlide === 0 ? aboutSlides.length - 1 : currentAboutSlide - 1;
+        updateAboutSlider();
+    });
+    
+    // Next slide
+    aboutNextBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('About next clicked');
+        currentAboutSlide = currentAboutSlide === aboutSlides.length - 1 ? 0 : currentAboutSlide + 1;
+        updateAboutSlider();
+    });
+    
+    // Initialize
+    updateAboutSlider();
+    console.log('About slider initialized successfully');
+}
+
+// Shop category functionality removed - handled by simple-gallery.js
+
+// Ensure Philosophy Section is Visible
+function ensurePhilosophySectionVisible() {
+    const philosophySection = document.querySelector('.philosophy-cards');
+    if (philosophySection) {
+        console.log('Philosophy section found:', philosophySection);
+        
+        // Make sure it's visible
+        philosophySection.style.display = 'flex';
+        philosophySection.style.visibility = 'visible';
+        philosophySection.style.opacity = '1';
+        
+        // Check if content exists
+        const cardContent = philosophySection.querySelector('.card-content');
+        if (cardContent) {
+            console.log('Card content found:', cardContent);
+            cardContent.style.display = 'flex';
+            cardContent.style.visibility = 'visible';
+        } else {
+            console.error('Card content not found!');
+        }
+        
+        // Check if text exists
+        const textElements = philosophySection.querySelectorAll('p');
+        console.log('Text elements found:', textElements.length);
+        textElements.forEach((p, i) => {
+            console.log(`Text ${i}:`, p.textContent.substring(0, 50) + '...');
+        });
+    } else {
+        console.error('Philosophy section not found!');
+    }
+}
+
+// Inspirations Gallery Functionality
+// Global flag to prevent multiple initializations
+let inspirationGalleryInitialized = false;
+
+function initInspirationGallery() {
+    if (inspirationGalleryInitialized) return;
+    inspirationGalleryInitialized = true;
+    
+    // Get gallery items from inspirations section
+    const inspirationsSection = document.querySelector('#inspirations, .inspirations-section');
+    if (!inspirationsSection) return;
+
+    const modal = document.getElementById('gallery-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalVideo = document.getElementById('modal-video');
+    const modalClose = document.querySelector('.modal-close');
+    const modalPrev = document.querySelector('.modal-prev');
+    const modalNext = document.querySelector('.modal-next');
+    const modalCurrent = document.getElementById('modal-current');
+    const modalTotal = document.getElementById('modal-total');
+    
+    if (!modal || !modalImage || !modalClose) return;
+
+    // All inspiration images - starting with the HTML order, then adding the rest
+    const allImages = [
+        // First 12 match the HTML layout order (indices 0-11)
+        'IMG_7874.JPG',   // index 0 - main featured image
+        'IMG_7780.JPG',   // index 1
+        'IMG_7794e.jpg',  // index 2  
+        'IMG_7799e.jpg',  // index 3
+        'IMG_7804.JPG',   // index 4
+        'IMG_7845.JPG',   // index 5
+        'IMG_7850.JPG',   // index 6
+        'IMG_7818.JPG',   // index 7
+        'IMG_7820.JPG',   // index 8
+        'IMG_7822.JPG',   // index 9
+        'IMG_7825.JPG',   // index 10
+        'IMG_7828.JPG',   // index 11
+        // Additional images (indices 12+)
+        'IMG_7833.JPG', 'IMG_7835.JPG', 'IMG_7855.JPG', 'IMG_7859.JPG', 'IMG_7860e.jpg',
+        'IMG_7866.JPG', 'IMG_7870.JPG', 'IMG_7876e.jpg', 'IMG_7887.JPG', 'IMG_7889.JPG',
+        'IMG_7902.JPG', 'IMG_7909.JPG', 'IMG_7911.JPG', 'IMG_7912.JPG', 'IMG_7929.JPG',
+        'IMG_7931.JPG', 'IMG_7933.JPG', 'IMG_7945e.jpg', 'IMG_7946.JPG', 'IMG_7953e.jpg',
+        'IMG_7958e.jpg', 'IMG_7959e.jpg', 'IMG_7963e.jpg', 'IMG_7966.JPG', 'IMG_7970e.jpg',
+        'IMG_7975.JPG', 'IMG_7979.JPG', 'IMG_7980.JPG', 'IMG_7993.JPG'
+    ];
+    
+    // Now get the existing gallery items (12 hardcoded ones)
+    const galleryItems = inspirationsSection.querySelectorAll('.gallery-item');
+    if (!galleryItems.length) return;
+    
+    let currentIndex = 0;
+    
+    // Build media array from ALL images, not just the hardcoded ones
+    const media = allImages.map(imageName => ({
+        type: 'image',
+        src: `images/inspirations/${imageName}`,
+        alt: 'Ceramic inspiration'
+    }));
+    
+    // Set total count
+    modalTotal.textContent = media.length;
+    
+    // Add click handlers to gallery items
+    galleryItems.forEach((item, index) => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            try {
+                currentIndex = index;
+                showModal();
+            } catch (error) {
+                console.error('Error opening gallery:', error);
+            }
+        });
+        
+        // Add hover effect
+        item.style.cursor = 'pointer';
+        item.style.transition = 'transform 0.3s ease';
+        
+        item.addEventListener('mouseenter', function() {
+            item.style.transform = 'scale(1.02)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            item.style.transform = 'scale(1)';
+        });
+    });
+    
+    function showModal() {
+        try {
+            const currentMedia = media[currentIndex];
+            if (!currentMedia) return;
+            
+            // Update counter
+            if (modalCurrent) modalCurrent.textContent = currentIndex + 1;
+            
+            // Show image
+            if (modalImage) {
+                modalImage.src = currentMedia.src;
+                modalImage.alt = currentMedia.alt;
+                modalImage.style.display = 'block';
+            }
+            if (modalVideo) {
+                modalVideo.style.display = 'none';
+            }
+            
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        } catch (error) {
+            console.error('Error in showModal:', error);
+        }
+    }
+    
+    function hideModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function navigateImage(direction) {
+        currentIndex += direction;
+        
+        if (currentIndex >= media.length) {
+            currentIndex = 0;
+        } else if (currentIndex < 0) {
+            currentIndex = media.length - 1;
+        }
+        
+        showModal();
+    }
+    
+    // Event listeners
+    modalClose.addEventListener('click', hideModal);
+    modalPrev.addEventListener('click', () => navigateImage(-1));
+    modalNext.addEventListener('click', () => navigateImage(1));
+    
+    // Click outside to close
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (modal.style.display !== 'flex') return;
+        
+        if (e.key === 'Escape') {
+            hideModal();
+        } else if (e.key === 'ArrowLeft') {
+            navigateImage(-1);
+        } else if (e.key === 'ArrowRight') {
+            navigateImage(1);
+        }
+    });
+}
+
+// Initialize additional functionality
+window.addEventListener('load', function() {
+    document.body.classList.add('loaded');
+    
+    // Add fade-in animation to hero content
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+        heroContent.classList.add('fade-in-up');
+    }
+});
+
+// Add CSS for active navigation state and animations
 const style = document.createElement('style');
 style.textContent = `
     .nav-link.active,
@@ -389,577 +777,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Add loading states
-window.addEventListener('load', function() {
-    document.body.classList.add('loaded');
-    
-    // Add fade-in animation to hero content
-    const heroContent = document.querySelector('.hero-content');
-    if (heroContent) {
-        heroContent.classList.add('fade-in-up');
-    }
-});
-
-// Mobile menu functionality (if needed in future)
-function toggleMobileMenu() {
-    const nav = document.querySelector('.main-nav');
-    nav.classList.toggle('mobile-open');
-}
-
-// Contact form handling (if form is added later)
-function handleContactForm(formData) {
-    // This would handle form submission
-    console.log('Contact form submitted:', formData);
-}
-
-// Image lazy loading for better performance
-function initLazyLoading() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
-
-// Initialize lazy loading if there are lazy images
-if (document.querySelectorAll('img[data-src]').length > 0) {
-    initLazyLoading();
-}
-
-// Add scroll progress indicator
-function addScrollProgress() {
-    const progressBar = document.createElement('div');
-    progressBar.className = 'scroll-progress';
-    progressBar.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 0%;
-        height: 2px;
-        background-color: #2c2c2c;
-        z-index: 1001;
-        transition: width 0.1s ease;
-    `;
-    document.body.appendChild(progressBar);
-    
-    window.addEventListener('scroll', function() {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (winScroll / height) * 100;
-        progressBar.style.width = scrolled + '%';
-    });
-}
-
-// Initialize scroll progress
-addScrollProgress();
-
-// Shop horizontal slider
-function initShopSlider() {
-    const slides = document.querySelectorAll('.shop-slide');
-    const prevBtn = document.querySelector('.slider-prev');
-    const nextBtn = document.querySelector('.slider-next');
-    
-    if (!slides.length) return;
-    
-    let currentSlide = 0;
-    
-    function updateSlider() {
-        // Clear any inline styles and update slides with proper state management
-        slides.forEach((slide, index) => {
-            slide.style.transform = '';
-            slide.style.opacity = '';
-            slide.style.visibility = '';
-            slide.classList.remove('active', 'prev', 'next');
-            
-            if (index === currentSlide) {
-                slide.classList.add('active');
-            } else {
-                // Handle circular logic for proper slide directions
-                const isLoopingForward = currentSlide === 0 && index === slides.length - 1;
-                const isLoopingBackward = currentSlide === slides.length - 1 && index === 0;
-                
-                if (isLoopingForward) {
-                    // When CUPS is active, WAVES should be positioned as "prev" (left side for left arrow)
-                    slide.classList.add('prev');
-                } else if (isLoopingBackward) {
-                    // When WAVES is active, CUPS should be positioned as "next" (right side for right arrow)
-                    slide.classList.add('next');
-                } else if (index < currentSlide) {
-                    slide.classList.add('prev');
-                } else {
-                    slide.classList.add('next');
-                }
-            }
-        });
-        
-        // Arrows are always active since we have infinite loop
-        prevBtn.style.opacity = '1';
-        nextBtn.style.opacity = '1';
-    }
-    
-    let isTransitioning = false;
-    
-    function nextSlide() {
-        if (!isTransitioning) {
-            isTransitioning = true;
-            const nextIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-            currentSlide = nextIndex;
-            updateSlider();
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 800);
-        }
-    }
-    
-    function prevSlide() {
-        if (!isTransitioning) {
-            isTransitioning = true;
-            const prevIndex = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
-            currentSlide = prevIndex;
-            updateSlider();
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 800);
-        }
-    }
-    
-    function goToSlide(index) {
-        if (index >= 0 && index < slides.length && !isTransitioning) {
-            isTransitioning = true;
-            currentSlide = index;
-            updateSlider();
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 800);
-        }
-    }
-    
-    // Event listeners
-    nextBtn.addEventListener('click', nextSlide);
-    prevBtn.addEventListener('click', prevSlide);
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        const shopSection = document.querySelector('.shop');
-        const rect = shopSection.getBoundingClientRect();
-        const isVisible = rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5;
-        
-        if (!isVisible) return;
-        
-        if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            prevSlide();
-        } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            nextSlide();
-        }
-    });
-    
-    // Touch/swipe support
-    let startX = 0;
-    let startY = 0;
-    
-    const shopSlider = document.querySelector('.shop-slider');
-    
-    shopSlider.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-    });
-    
-    shopSlider.addEventListener('touchend', function(e) {
-        if (!startX || !startY) return;
-        
-        const endX = e.changedTouches[0].clientX;
-        const endY = e.changedTouches[0].clientY;
-        const diffX = startX - endX;
-        const diffY = startY - endY;
-        
-        // Only respond to horizontal swipes
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-            if (diffX > 0) {
-                // Swipe left - next slide
-                nextSlide();
-            } else {
-                // Swipe right - previous slide
-                prevSlide();
-            }
-        }
-        
-        startX = 0;
-        startY = 0;
-    });
-    
-    // Learn More button handlers
-    const learnMoreBtns = document.querySelectorAll('.learn-more-btn');
-    learnMoreBtns.forEach((btn, index) => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const categories = ['CUPS&SAUCERS', 'HAND BUILDING', 'BOWLS', 'TEAPOTS'];
-            alert(`Opening ${categories[currentSlide]} gallery - coming soon!`);
-        });
-    });
-    
-    // Initialize
-    updateSlider();
-}
-
-// Initialize shop slider
-initShopSlider();
-
-// About section slider
-function initAboutSlider() {
-    const slides = document.querySelectorAll('.about-slide');
-    const prevBtn = document.querySelector('.about-slider-container .slider-prev');
-    const nextBtn = document.querySelector('.about-slider-container .slider-next');
-    
-    if (!slides.length) return;
-    
-    let currentSlide = 0;
-    
-    function updateSlider() {
-        slides.forEach((slide, index) => {
-            slide.classList.remove('active');
-            if (index === currentSlide) {
-                slide.classList.add('active');
-            }
-        });
-    }
-    
-    let isTransitioning = false;
-    
-    function nextSlide() {
-        if (!isTransitioning) {
-            isTransitioning = true;
-            const nextIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-            currentSlide = nextIndex;
-            updateSlider();
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 500);
-        }
-    }
-    
-    function prevSlide() {
-        if (!isTransitioning) {
-            isTransitioning = true;
-            const prevIndex = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
-            currentSlide = prevIndex;
-            updateSlider();
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 500);
-        }
-    }
-    
-    // Event listeners
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    
-    // Keyboard navigation for about section
-    document.addEventListener('keydown', function(e) {
-        const aboutSection = document.querySelector('.about');
-        if (!aboutSection) return;
-        
-        const rect = aboutSection.getBoundingClientRect();
-        const isVisible = rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5;
-        
-        if (!isVisible) return;
-        
-        if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            prevSlide();
-        } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            nextSlide();
-        }
-    });
-    
-    // Touch support for about slider
-    const aboutSlider = document.querySelector('.about-slider');
-    if (aboutSlider) {
-        aboutSlider.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-        });
-        
-        aboutSlider.addEventListener('touchend', function(e) {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchDiff = touchStartX - touchEndX;
-            
-            if (Math.abs(touchDiff) > 50) {
-                if (touchDiff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
-            }
-        });
-    }
-    
-    // Initialize
-    updateSlider();
-}
-
-// Initialize about slider
-initAboutSlider();
-
-// Performance optimization: Debounce scroll events
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Apply debouncing to scroll-heavy functions
-const debouncedScrollHandler = debounce(function() {
-    highlightActiveNavigation();
-}, 10);
-
-window.removeEventListener('scroll', highlightActiveNavigation);
-window.addEventListener('scroll', debouncedScrollHandler);
-
-// Gallery Modal functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const modal = document.getElementById('gallery-modal');
-    const modalImage = document.getElementById('modal-image');
-    const modalVideo = document.getElementById('modal-video');
-    const modalClose = document.querySelector('.modal-close');
-    const modalPrev = document.querySelector('.modal-prev');
-    const modalNext = document.querySelector('.modal-next');
-    const modalCurrent = document.getElementById('modal-current');
-    const modalTotal = document.getElementById('modal-total');
-    
-    let currentIndex = 0;
-    
-    // Gallery data
-    const galleryData = [
-        { type: 'image', src: 'images/inspirations/IMG_7791.JPG', alt: 'Ceramic inspiration' },
-        { type: 'image', src: 'images/inspirations/IMG_7911.JPG', alt: 'Ceramic inspiration' },
-        { type: 'image', src: 'images/inspirations/IMG_7945.JPG', alt: 'Ceramic inspiration' },
-        { type: 'image', src: 'images/inspirations/IMG_7963.JPG', alt: 'Ceramic inspiration' },
-        { type: 'image', src: 'images/inspirations/IMG_7966.JPG', alt: 'Ceramic inspiration' },
-        { type: 'image', src: 'images/inspirations/IMG_7970.JPG', alt: 'Ceramic inspiration' }
-    ];
-    
-    // Check if modal elements exist
-    if (!modal) return;
-    
-    // Update modal total
-    modalTotal.textContent = galleryData.length;
-    
-    // Open modal
-    function openModal(index) {
-        currentIndex = index;
-        showMedia(currentIndex);
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    // Close modal
-    function closeModal() {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-        // Pause video if playing
-        if (modalVideo && !modalVideo.paused) {
-            modalVideo.pause();
-        }
-    }
-    
-    // Show media at current index
-    function showMedia(index) {
-        const item = galleryData[index];
-        modalCurrent.textContent = index + 1;
-        
-        if (item.type === 'image') {
-            modalImage.src = item.src;
-            modalImage.alt = item.alt;
-            modalImage.style.display = 'block';
-            modalVideo.style.display = 'none';
-            if (modalVideo) modalVideo.pause();
-        } else if (item.type === 'video') {
-            const videoSource = modalVideo.querySelector('source');
-            videoSource.src = item.src;
-            modalVideo.load();
-            modalVideo.style.display = 'block';
-            modalImage.style.display = 'none';
-        }
-    }
-    
-    // Navigate to previous item
-    function showPrevious() {
-        currentIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
-        showMedia(currentIndex);
-    }
-    
-    // Navigate to next item
-    function showNext() {
-        currentIndex = (currentIndex + 1) % galleryData.length;
-        showMedia(currentIndex);
-    }
-    
-    // Event listeners
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', () => openModal(index));
-    });
-    
-    if (modalClose) modalClose.addEventListener('click', closeModal);
-    if (modalPrev) modalPrev.addEventListener('click', showPrevious);
-    if (modalNext) modalNext.addEventListener('click', showNext);
-    
-    // Close modal when clicking outside content
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (!modal.classList.contains('active')) return;
-        
-        switch(e.key) {
-            case 'Escape':
-                closeModal();
-                break;
-            case 'ArrowLeft':
-                showPrevious();
-                break;
-            case 'ArrowRight':
-                showNext();
-                break;
-        }
-    });
-});
-
-// Video Reverse Looping for Hero Sections
-document.addEventListener('DOMContentLoaded', function() {
-    const heroVideos = document.querySelectorAll('.video-background video');
-    
-    heroVideos.forEach(video => {
-        let isPlayingForward = true;
-        let reverseInterval;
-        
-        video.addEventListener('loadedmetadata', function() {
-            // Start playing forward
-            video.currentTime = 0;
-            isPlayingForward = true;
-        });
-        
-        video.addEventListener('timeupdate', function() {
-            // When video reaches the end, start manual reverse playback
-            if (isPlayingForward && video.currentTime >= video.duration - 0.1) {
-                startReversePlayback();
-            }
-        });
-        
-        function startReversePlayback() {
-            isPlayingForward = false;
-            video.pause();
-            
-            // Clear any existing interval
-            if (reverseInterval) {
-                clearInterval(reverseInterval);
-            }
-            
-            // Manually step backward through frames
-            reverseInterval = setInterval(() => {
-                if (video.currentTime <= 0.1) {
-                    // Reached the beginning, start forward playback again
-                    clearInterval(reverseInterval);
-                    isPlayingForward = true;
-                    video.currentTime = 0;
-                    video.play();
-                } else {
-                    // Step backward (adjust step size for smoother/faster reverse)
-                    video.currentTime -= 0.05; // 50ms steps backward
-                }
-            }, 33); // ~30fps for smooth reverse playback
-        }
-        
-        // Handle the ended event as a fallback
-        video.addEventListener('ended', function() {
-            if (isPlayingForward) {
-                startReversePlayback();
-            }
-        });
-        
-        // Clean up interval when video is paused or removed
-        video.addEventListener('pause', function() {
-            if (reverseInterval) {
-                clearInterval(reverseInterval);
-            }
-            // Don't auto-restart during reverse playback
-            if (isPlayingForward) {
-                setTimeout(() => {
-                    if (video.paused && isPlayingForward) {
-                        video.play();
-                    }
-                }, 100);
-            }
-        });
-    });
-});
-
-// Text Animation on Scroll
-document.addEventListener('DOMContentLoaded', function() {
-    const animateElements = document.querySelectorAll('.animate-text');
-    
-    // Intersection Observer for scroll animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Add animation class
-                entry.target.classList.add('in-view');
-                entry.target.style.animation = 'fadeInUp 1s ease forwards';
-                
-                // Optional: Stop observing after animation
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.3, // Trigger when 30% of element is visible
-        rootMargin: '0px 0px -100px 0px' // Start animation 100px before element enters viewport
-    });
-    
-    // Start observing all animate elements
-    animateElements.forEach(element => {
-        observer.observe(element);
-    });
-    
-    // Fallback scroll listener for better compatibility
-    function checkScroll() {
-        animateElements.forEach(element => {
-            if (!element.classList.contains('in-view')) {
-                const elementTop = element.getBoundingClientRect().top;
-                const elementVisible = 150;
-                
-                if (elementTop < window.innerHeight - elementVisible) {
-                    element.classList.add('in-view');
-                    element.style.animation = 'fadeInUp 1s ease forwards';
-                }
-            }
-        });
-    }
-    
-    // Add scroll event listener as backup
-    window.addEventListener('scroll', checkScroll);
-    
-    // Check on load in case elements are already in view
-    checkScroll();
-});

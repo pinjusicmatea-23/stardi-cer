@@ -13,6 +13,7 @@ class SimpleGallery {
         await this.loadProducts();
         this.createGalleryHTML();
         this.bindEvents();
+        this.styleClickableTitles();
     }
 
     async loadProducts() {
@@ -94,13 +95,32 @@ class SimpleGallery {
     }
 
     bindEvents() {
-        // Handle product image clicks
+        // Handle product image clicks - ONLY in shop section
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.product-image')) {
-                e.preventDefault();
-                const slide = e.target.closest('.shop-slide');
-                const category = slide.getAttribute('data-category');
-                this.openGallery(category);
+            const productImage = e.target.closest('.product-image');
+            if (productImage) {
+                const shopSection = productImage.closest('.shop-section');
+                if (shopSection) { // Only handle if in shop section
+                    e.preventDefault();
+                    const slide = productImage.closest('.shop-slide');
+                    const category = slide.getAttribute('data-category');
+                    this.openGallery(category);
+                }
+            }
+        });
+
+        // Handle category text clicks - ONLY in shop section
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('clickable-title')) {
+                const shopSection = e.target.closest('.shop-section');
+                if (shopSection) { // Only handle if in shop section
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const category = e.target.getAttribute('data-category');
+                    if (category) {
+                        this.openGallery(category);
+                    }
+                }
             }
         });
 
@@ -371,6 +391,26 @@ class SimpleGallery {
                 </div>
             </div>
         `;
+    }
+
+    styleClickableTitles() {
+        // Make category titles clickable and add hover effects
+        const clickableTitles = document.querySelectorAll('.clickable-title');
+        
+        clickableTitles.forEach(title => {
+            // Make it look clickable
+            title.style.cursor = 'pointer';
+            title.style.transition = 'color 0.3s ease';
+            
+            // Add hover effects
+            title.addEventListener('mouseenter', function() {
+                title.style.color = '#9D8663';
+            });
+            
+            title.addEventListener('mouseleave', function() {
+                title.style.color = '';
+            });
+        });
     }
 }
 
