@@ -224,6 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', function() {
         const header = document.querySelector('.main-header');
+        if (!header) return; // Safety check
+        
         const currentScrollY = window.scrollY;
         
         // Check if we're in the main home hero section only
@@ -241,25 +243,30 @@ document.addEventListener('DOMContentLoaded', function() {
         // Always transparent header when scrolling
         if (currentScrollY > lastScrollY && currentScrollY > 100) {
             // Scrolling down - hide header
+            console.log('Hiding header - scrolling down');
             header.style.transform = 'translateY(-100%)';
         }
         else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
             // Scrolling up or at top - show header with transparent background
+            console.log('Showing header - scrolling up or at top');
             header.style.transform = 'translateY(0)';
             header.style.backgroundColor = 'transparent';
             header.style.backdropFilter = 'none';
             
             // Adjust text color based on section for visibility
+            const logoElement = header.querySelector('.logo h1');
+            const menuLines = header.querySelectorAll('.menu-line');
+            
             if (inMainHero) {
                 // White text in main hero
-                header.querySelector('.logo h1').style.color = '#f8f8f8';
-                header.querySelectorAll('.menu-line').forEach(line => {
+                if (logoElement) logoElement.style.color = '#f8f8f8';
+                menuLines.forEach(line => {
                     line.style.backgroundColor = '#f8f8f8';
                 });
             } else {
                 // Black text in other sections
-                header.querySelector('.logo h1').style.color = '#2c2c2c';
-                header.querySelectorAll('.menu-line').forEach(line => {
+                if (logoElement) logoElement.style.color = '#2c2c2c';
+                menuLines.forEach(line => {
                     line.style.backgroundColor = '#2c2c2c';
                 });
             }
