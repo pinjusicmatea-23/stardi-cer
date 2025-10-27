@@ -1066,8 +1066,8 @@ p {
     .video-hero {
         flex-direction: column;
         height: auto;
-        min-height: 100vh;
-        padding: 2rem 0;
+        min-height: 70vh; /* Reduced from 100vh */
+        padding: 1rem 0; /* Reduced from 2rem */
     }
     
     .video-background {
@@ -1076,8 +1076,8 @@ p {
         left: auto;
         transform: none;
         width: 80%;
-        height: 50vh;
-        margin: 0 auto 2rem auto;
+        height: 40vh; /* Reduced from 50vh */
+        margin: 0 auto 1rem auto; /* Reduced margin */
         border-radius: 12px;
     }
     
@@ -1091,7 +1091,7 @@ p {
     .video-hero-content {
         max-width: 100%;
         margin-left: 0;
-        padding: 2rem;
+        padding: 1rem; /* Reduced from 2rem */
         height: auto;
         text-align: center;
         background: transparent;
@@ -1101,10 +1101,107 @@ p {
         font-family: 'Cormorant Garamond', serif;
         font-style: italic;
         font-size: 2.5rem;
+        margin-bottom: 0.5rem; /* Reduced margin */
     }
     
     .video-hero-content p {
         font-size: 1rem;
+        margin-bottom: 0; /* Reduced margin */
+    }
+}
+
+/* Mobile Dense Layout - Reduce white space on mobile */
+@media (max-width: 768px) {
+    /* General section spacing */
+    section {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    /* Section hero spacing */
+    .section-hero {
+        margin-top: -40px !important;
+        padding-top: 40px !important;
+    }
+    
+    /* Gallery container spacing */
+    .gallery-container {
+        margin: 2rem auto !important;
+        width: calc(100% - 2rem) !important;
+    }
+    
+    /* Philosophy cards spacing */
+    .philosophy-cards {
+        padding: 2rem 0 !important;
+        min-height: auto !important;
+    }
+    
+    .cards-container {
+        gap: 2rem !important;
+    }
+    
+    /* Shop and About sections */
+    .shop, .about {
+        padding: 0 !important;
+    }
+    
+    /* Contact section */
+    .contact {
+        padding: 3rem 1rem !important;
+    }
+    
+    /* Reduce gaps in grid layouts */
+    .gallery-grid {
+        grid-gap: 10px !important;
+    }
+    
+    .category-gallery {
+        gap: 15px !important;
+        padding: 10px !important;
+    }
+}
+
+/* Extra small mobile - even more dense */
+@media (max-width: 480px) {
+    /* Further reduce video hero height */
+    .video-hero {
+        min-height: 60vh !important;
+        padding: 0.5rem 0 !important;
+    }
+    
+    .video-background {
+        height: 35vh !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .video-hero-content {
+        padding: 0.5rem !important;
+    }
+    
+    /* Tighter section spacing */
+    section {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Reduce philosophy card spacing */
+    .philosophy-cards {
+        padding: 1rem 0 !important;
+    }
+    
+    .card-content {
+        padding: 30px 15px !important;
+        min-height: auto !important;
+    }
+    
+    /* Tighter gallery spacing */
+    .gallery-container {
+        margin: 1rem auto !important;
+    }
+    
+    /* Contact section */
+    .contact {
+        padding: 2rem 0.5rem !important;
     }
 }
 
