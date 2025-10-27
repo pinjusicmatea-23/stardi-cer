@@ -268,30 +268,12 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.backgroundColor = 'transparent';
             header.style.backdropFilter = 'none';
             
-            // Adjust logo and menu colors based on section for visibility
+            // Just handle logo opacity, don't change hamburger colors
             const logoImg = header.querySelector('.logo img');
-            const menuLines = header.querySelectorAll('.menu-line');
             
-            // Check if we're on mobile
-            const isMobile = window.innerWidth <= 768;
+            if (logoImg) logoImg.style.opacity = '1';
             
-            if (inMainHero && !isMobile) {
-                // White menu lines in main hero (desktop only)
-                if (logoImg) logoImg.style.opacity = '1';
-                menuLines.forEach(line => {
-                    line.style.backgroundColor = '#f8f8f8';
-                });
-            } else {
-                // Keep default brand color on mobile, or black on desktop for other sections
-                if (logoImg) logoImg.style.opacity = '1';
-                menuLines.forEach(line => {
-                    if (isMobile) {
-                        line.style.backgroundColor = '#9D8663'; // Brand color on mobile
-                    } else {
-                        line.style.backgroundColor = inMainHero ? '#f8f8f8' : '#2c2c2c';
-                    }
-                });
-            }
+            // Don't change hamburger menu colors - let them stay the default brand color
         }
         
         lastScrollY = currentScrollY;

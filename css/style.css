@@ -108,19 +108,22 @@ p {
     background-color: #9D8663;
 }
 
-/* Ensure hamburger icon color consistency on mobile */
-@media (max-width: 768px) {
-    .menu-line {
-        background-color: #9D8663 !important;
-    }
-    
-    .menu-toggle:hover .menu-line {
-        background-color: #8B7355 !important;
-    }
-    
-    .menu-toggle.active .menu-line {
-        background-color: #9D8663 !important;
-    }
+/* Ensure hamburger icon always stays brand color */
+.menu-line {
+    background-color: #9D8663 !important;
+}
+
+.menu-toggle:hover .menu-line {
+    background-color: #8B7355 !important;
+}
+
+.menu-toggle.active .menu-line {
+    background-color: #9D8663 !important;
+}
+
+/* Force brand color even with inline styles on all devices */
+.main-header .menu-line[style] {
+    background-color: #9D8663 !important;
 }
 
 .menu-toggle.active .menu-line:nth-child(1) {
