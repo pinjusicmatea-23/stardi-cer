@@ -22,12 +22,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Make header black when menu is open
         const header = document.querySelector('.main-header');
-        header.style.backgroundColor = 'rgba(0, 0, 0, 0.98)';
-        header.style.backdropFilter = 'blur(20px)';
-        header.querySelector('.logo h1').style.color = '#f8f8f8';
-        header.querySelectorAll('.menu-line').forEach(line => {
-            line.style.backgroundColor = '#f8f8f8';
-        });
+        if (header) {
+            header.style.backgroundColor = 'rgba(0, 0, 0, 0.98)';
+            header.style.backdropFilter = 'blur(20px)';
+            
+            // Handle logo - check if it exists and has img
+            const logoImg = header.querySelector('.logo img');
+            if (logoImg) {
+                logoImg.style.opacity = '0.9';
+            }
+            
+            // Handle menu lines
+            const menuLines = header.querySelectorAll('.menu-line');
+            menuLines.forEach(line => {
+                line.style.backgroundColor = '#f8f8f8';
+            });
+        }
     }
 
     // Close menu when clicking on overlay
@@ -58,6 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Restore header state based on current position
         const header = document.querySelector('.main-header');
+        if (!header) return;
+        
         const currentScrollY = window.scrollY;
         
         // Check if we're in the main home hero section
@@ -72,20 +84,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        const logoImg = header.querySelector('.logo img');
+        const menuLines = header.querySelectorAll('.menu-line');
+        
         if (inMainHero) {
             // Back to transparent home state
             header.style.backgroundColor = 'transparent';
             header.style.backdropFilter = 'none';
-            header.querySelector('.logo h1').style.color = '#f8f8f8';
-            header.querySelectorAll('.menu-line').forEach(line => {
+            if (logoImg) logoImg.style.opacity = '1';
+            menuLines.forEach(line => {
                 line.style.backgroundColor = '#f8f8f8';
             });
         } else {
             // Back to white state with black text
             header.style.backgroundColor = 'rgba(248, 248, 248, 0.98)';
             header.style.backdropFilter = 'blur(15px)';
-            header.querySelector('.logo h1').style.color = '#2c2c2c';
-            header.querySelectorAll('.menu-line').forEach(line => {
+            if (logoImg) logoImg.style.opacity = '1';
+            menuLines.forEach(line => {
                 line.style.backgroundColor = '#2c2c2c';
             });
         }
@@ -253,21 +268,28 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.backgroundColor = 'transparent';
             header.style.backdropFilter = 'none';
             
-            // Adjust text color based on section for visibility
-            const logoElement = header.querySelector('.logo h1');
+            // Adjust logo and menu colors based on section for visibility
+            const logoImg = header.querySelector('.logo img');
             const menuLines = header.querySelectorAll('.menu-line');
             
-            if (inMainHero) {
-                // White text in main hero
-                if (logoElement) logoElement.style.color = '#f8f8f8';
+            // Check if we're on mobile
+            const isMobile = window.innerWidth <= 768;
+            
+            if (inMainHero && !isMobile) {
+                // White menu lines in main hero (desktop only)
+                if (logoImg) logoImg.style.opacity = '1';
                 menuLines.forEach(line => {
                     line.style.backgroundColor = '#f8f8f8';
                 });
             } else {
-                // Black text in other sections
-                if (logoElement) logoElement.style.color = '#2c2c2c';
+                // Keep default brand color on mobile, or black on desktop for other sections
+                if (logoImg) logoImg.style.opacity = '1';
                 menuLines.forEach(line => {
-                    line.style.backgroundColor = '#2c2c2c';
+                    if (isMobile) {
+                        line.style.backgroundColor = '#9D8663'; // Brand color on mobile
+                    } else {
+                        line.style.backgroundColor = inMainHero ? '#f8f8f8' : '#2c2c2c';
+                    }
                 });
             }
         }
@@ -497,11 +519,17 @@ function initAboutSlider() {
     function updateAboutSlider() {
         aboutSlides.forEach((slide, index) => {
             slide.classList.remove('active');
+            
             if (index === currentAboutSlide) {
                 slide.classList.add('active');
+                
+                // Clear any inline styles to let CSS handle display
+                slide.style.display = '';
+                slide.style.opacity = '';
+                slide.style.visibility = '';
+                slide.style.background = '';
             }
         });
-        console.log('About slider updated to slide:', currentAboutSlide);
     }
     
     // Previous slide
