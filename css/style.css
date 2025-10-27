@@ -2414,7 +2414,7 @@ p {
     display: block;
     width: 280px;
     height: 280px;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem; /* Reduced from 4rem */
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
@@ -2475,13 +2475,14 @@ p {
 /* Responsive for about section */
 @media (max-width: 768px) {
     .about-image {
-        width: 220px;
-        height: 220px;
-        margin-bottom: 3rem;
+        width: 180px; /* Reduced from 220px */
+        height: 180px; /* Reduced from 220px */
+        margin-bottom: 1rem; /* Reduced from 3rem */
     }
     
     .about-title {
-        font-size: 2.5rem;
+        font-size: 2rem; /* Reduced from 2.5rem */
+        margin-bottom: 0; /* Remove any bottom margin */
     }
     
     .about-text {
@@ -2495,6 +2496,20 @@ p {
     
     .about-slider-container .slider-next {
         right: 1rem;
+    }
+}
+
+/* Extra mobile optimization for about section */
+@media (max-width: 480px) {
+    .about-image {
+        width: 150px !important;
+        height: 150px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .about-title {
+        font-size: 1.8rem !important;
+        margin-bottom: 0 !important;
     }
 }
 
