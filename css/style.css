@@ -2580,6 +2580,97 @@ p {
     color: #666;
 }
 
+/* Ceramics in Use Gallery - Instagram Style */
+.ceramics-in-use-section {
+    padding: 4rem 0;
+    background: #f9f9f9;
+}
+
+.ceramics-in-use-section .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0 40px;
+    width: 100%;
+}
+
+.ceramics-in-use-section h2 {
+    text-align: left;
+    font-size: 1.8rem;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    color: #333;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+    padding-left: 0;
+    text-transform: none;
+}
+
+.in-use-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.in-use-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.in-use-item:hover {
+    transform: translateY(-5px);
+}
+
+.in-use-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.in-use-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Mobile Responsive for In-Use Gallery */
+@media (max-width: 768px) {
+    .in-use-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .ceramics-in-use-section {
+        padding: 3rem 0;
+    }
+    
+    .ceramics-in-use-section h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .in-use-item {
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .in-use-grid {
+        gap: 10px;
+    }
+    
+    .ceramics-in-use-section .container {
+        padding: 0 1rem;
+    }
+}
+
 /* Footer */
 .main-footer {
     padding: 60px 40px 40px;
@@ -3506,10 +3597,17 @@ button:focus {
 
 .simple-gallery .gallery-grid {
     display: flex;
+    flex-direction: column;
     gap: 30px;
     height: 100%;
     align-items: flex-start;
     padding-bottom: 20px;
+}
+
+.simple-gallery .products-row {
+    display: flex;
+    gap: 30px;
+    width: 100%;
 }
 
 .simple-gallery .product-card {
@@ -3614,6 +3712,229 @@ button:focus {
 
 .simple-gallery .inquire-btn:active {
     transform: translateY(0);
+}
+
+/* Gallery Disclaimer */
+.gallery-disclaimer {
+    width: 630px;
+    padding: 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: left;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    line-height: 1.6;
+    font-style: italic;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Gallery Modal Styles - Simple Style */
+#image-gallery-modal {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 999999 !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+
+#image-gallery-modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+.image-gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.image-gallery-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-gallery-header {
+    display: none; /* Hide the header for simple style */
+}
+
+#image-gallery-modal .image-gallery-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    transition: color 0.3s ease;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    font-weight: 100;
+    font-family: Arial, sans-serif;
+}
+
+#image-gallery-modal .image-gallery-close::before {
+    content: '×';
+}
+
+.image-gallery-close:hover {
+    color: #ccc;
+}
+
+.image-gallery-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.image-display {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    max-width: 90%;
+}
+
+.main-gallery-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+#image-gallery-modal .image-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 10001;
+    font-family: Arial, sans-serif;
+}
+
+#image-gallery-modal .image-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 100;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+#image-gallery-modal .image-nav-btn:hover {
+    color: #ccc;
+}
+
+#image-gallery-modal .image-prev-btn {
+    left: 30px;
+}
+
+#image-gallery-modal .image-prev-btn::before {
+    content: '<';
+}
+
+#image-gallery-modal .image-next-btn {
+    right: 30px;
+}
+
+#image-gallery-modal .image-next-btn::before {
+    content: '>';
+}
+
+.image-thumbnails {
+    display: none; /* Hide thumbnails for simple style */
+}
+
+/* Hide elements for simple gallery style */
+.image-gallery-title {
+    display: none;
+}
+
+/* Image Count Badge */
+.image-count-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: Arial, sans-serif;
+}
+
+.product-image {
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.02);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .image-gallery-close {
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .image-counter {
+        top: 20px;
+        left: 20px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .image-nav-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .image-prev-btn {
+        left: 20px;
+    }
+    
+    .image-next-btn {
+        right: 20px;
+    }
 }
 
 /* Email Modal Styles */

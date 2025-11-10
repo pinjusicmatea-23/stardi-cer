@@ -2,9 +2,13 @@
 class SimpleGallery {
     constructor() {
         this.products = [];
-        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'hr';
         this.currentCategory = null;
         this.isGalleryOpen = false;
+        this.isImageGalleryOpen = false;
+        this.currentImages = [];
+        this.currentImageIndex = 0;
+        this.currentImageFolder = '';
         this.init();
     }
 
@@ -21,10 +25,64 @@ class SimpleGallery {
             const response = await fetch('sheets/cijene - sheet1.csv');
             const text = await response.text();
             this.products = this.parseCSV(text);
+            
+            // Check for additional images for each product
+            await this.detectAdditionalImages();
+            
             console.log('Products loaded:', this.products.length);
         } catch (error) {
             console.error('Error loading products:', error);
         }
+    }
+
+    async detectAdditionalImages() {
+        const folderMap = {
+            'cups': 'cups',
+            'bowls': 'bowls', 
+            'plates': 'plates',
+            'candles': 'candles',
+            'vases': 'vases'
+        };
+
+        for (const product of this.products) {
+            const folder = folderMap[product.category.toLowerCase()] || 'misc';
+            const baseImageName = product.image_file.replace(/\.[^/.]+$/, ""); // Remove extension
+            const imageExtension = product.image_file.match(/\.[^/.]+$/)?.[0] || '.jpg';
+            
+            product.images = [product.image_file]; // Start with main image
+            
+            // Check for additional images (_2, _3, _4, _5)
+            for (let i = 2; i <= 5; i++) {
+                const additionalImageName = `${baseImageName}_${i}${imageExtension}`;
+                const imagePath = `images/shop/${folder}/${additionalImageName}`;
+                
+                // Try to check if image exists
+                try {
+                    const imageExists = await this.checkImageExists(imagePath);
+                    if (imageExists) {
+                        product.images.push(additionalImageName);
+                        console.log(`Found additional image: ${imagePath}`);
+                    } else {
+                        break; // Stop checking if image doesn't exist
+                    }
+                } catch (error) {
+                    break; // Stop on error
+                }
+            }
+            
+            if (product.images.length > 1) {
+                console.log(`Product ${product.name} has ${product.images.length} images:`, product.images);
+            }
+        }
+    }
+
+    checkImageExists(imagePath) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = imagePath;
+        });
     }
 
     parseCSV(text) {
@@ -109,23 +167,83 @@ class SimpleGallery {
                     </form>
                 </div>
             </div>
+            
+            <!-- Image Gallery Modal -->
+            <div id="image-gallery-modal" class="image-gallery-modal">
+                <div class="image-gallery-overlay"></div>
+                <button class="image-gallery-close"></button>
+                <div class="image-gallery-content">
+                    <div class="image-gallery-header">
+                        <h3 class="image-gallery-title"></h3>
+                    </div>
+                    <div class="image-gallery-main">
+                        <button class="image-nav-btn image-prev-btn"></button>
+                        <div class="image-display">
+                            <img class="main-gallery-image" src="" alt="">
+                        </div>
+                        <button class="image-nav-btn image-next-btn"></button>
+                    </div>
+                    <div class="image-counter">
+                        <span class="current-image">1</span> / <span class="total-images">1</span>
+                    </div>
+                </div>
+            </div>
         `;
         
         document.body.insertAdjacentHTML('beforeend', galleryHTML);
     }
 
     bindEvents() {
-        // Handle product image clicks - ONLY in shop section
+        console.log('bindEvents called - setting up click listeners');
+        
+        // Debug click events on product images - ONLY for multi-image products
         document.addEventListener('click', (e) => {
+            console.log('CLICK DETECTED ANYWHERE:', e.target);
+            console.log('Click target classList:', e.target.classList);
+            console.log('Click target tagName:', e.target.tagName);
+            
             const productImage = e.target.closest('.product-image');
+            console.log('Product image found:', productImage);
             if (productImage) {
+                console.log('Product image clicked!');
+                console.log('data-images:', productImage.getAttribute('data-images'));
+                console.log('data-product-name:', productImage.getAttribute('data-product-name'));
+                console.log('data-category:', productImage.getAttribute('data-category'));
+                
+                const images = productImage.getAttribute('data-images');
+                const productName = productImage.getAttribute('data-product-name');
+                const category = productImage.getAttribute('data-category');
+                
+                // Only open image gallery if this product has multiple images (has image count badge)
+                const hasImageBadge = productImage.querySelector('.image-count-badge');
+                console.log('Has image count badge:', hasImageBadge);
+                
+                if (images && productName && category && hasImageBadge) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Opening image gallery for:', productName, 'with images:', images);
+                    const imageArray = JSON.parse(images);
+                    this.openImageGallery(imageArray, productName, category);
+                    return;
+                } else {
+                    console.log('Single image product or missing data - using normal gallery');
+                }
+                
+                // Fallback to old gallery opening logic for shop section
                 const shopSection = productImage.closest('.shop-section');
-                if (shopSection) { // Only handle if in shop section
+                if (shopSection) {
+                    console.log('Shop section fallback triggered');
                     e.preventDefault();
                     const slide = productImage.closest('.shop-slide');
-                    const category = slide.getAttribute('data-category');
-                    this.openGallery(category);
+                    if (slide) {
+                        const slideCategory = slide.getAttribute('data-category');
+                        this.openGallery(slideCategory);
+                    }
+                } else {
+                    console.log('No shop section found');
                 }
+            } else {
+                console.log('No product image found in click target');
             }
         });
 
@@ -151,6 +269,35 @@ class SimpleGallery {
                 e.target.classList.contains('category-close-btn') ||
                 e.target.id === 'categoryCloseBtn') {
                 this.closeGallery();
+            }
+        });
+
+        // Handle image gallery events
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('image-gallery-close') || 
+                e.target.classList.contains('image-gallery-overlay')) {
+                this.closeImageGallery();
+            }
+            
+            if (e.target.classList.contains('image-prev-btn')) {
+                this.previousImage();
+            }
+            
+            if (e.target.classList.contains('image-next-btn')) {
+                this.nextImage();
+            }
+        });
+
+        // Handle keyboard navigation for image gallery
+        document.addEventListener('keydown', (e) => {
+            if (this.isImageGalleryOpen) {
+                if (e.key === 'ArrowLeft') {
+                    this.previousImage();
+                } else if (e.key === 'ArrowRight') {
+                    this.nextImage();
+                } else if (e.key === 'Escape') {
+                    this.closeImageGallery();
+                }
             }
         });
         
@@ -220,7 +367,7 @@ class SimpleGallery {
         this.selectedProduct = product;
         
         // Get current language
-        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'hr';
         
         const modal = document.getElementById('email-modal');
         console.log('Modal element found:', modal);
@@ -373,12 +520,22 @@ class SimpleGallery {
 
         // Update grid
         const grid = document.getElementById('gallery-grid');
-        grid.innerHTML = products.map(product => this.createProductCard(product)).join('');
+        
+        // Add disclaimer text below product cards
+        const disclaimerText = this.currentLanguage === 'hr' 
+            ? 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).'
+            : 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).';
+        
+        const disclaimerHtml = `<div class="gallery-disclaimer">${disclaimerText}</div>`;
+        
+        const productsHtml = `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`;
+        
+        grid.innerHTML = productsHtml + disclaimerHtml;
     }
 
     createProductCard(product) {
         // Ensure current language is up to date
-        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'hr';
         
         const folderMap = {
             'cups': 'cups',
@@ -395,8 +552,9 @@ class SimpleGallery {
 
         return `
             <div class="product-card">
-                <div class="product-image">
+                <div class="product-image" data-images='${JSON.stringify(product.images)}' data-product-name="${product.name}" data-category="${product.category}">
                     <img src="${imagePath}" alt="${product.name}" loading="lazy">
+                    ${product.images.length > 1 ? '<div class="image-count-badge">' + product.images.length + '</div>' : ''}
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">${product.name}</h3>
@@ -431,6 +589,119 @@ class SimpleGallery {
                 title.style.color = '';
             });
         });
+    }
+
+    // Image Gallery Methods
+    openImageGallery(images, productName, category) {
+        console.log('openImageGallery called with:', images, productName, category);
+        
+        this.currentImages = images;
+        this.currentImageIndex = 0;
+        this.isImageGalleryOpen = true;
+
+        const folderMap = {
+            'cups': 'cups',
+            'bowls': 'bowls', 
+            'plates': 'plates',
+            'candles': 'candles',
+            'vases': 'vases'
+        };
+
+        const folder = folderMap[category.toLowerCase()] || 'misc';
+        this.currentImageFolder = folder;
+        
+        const modal = document.getElementById('image-gallery-modal');
+        console.log('Modal element found:', modal);
+        
+        if (!modal) {
+            console.error('Image gallery modal not found! Check if createGalleryHTML was called.');
+            return;
+        }
+        
+        const title = modal.querySelector('.image-gallery-title');
+        const totalImages = modal.querySelector('.total-images');
+        
+        console.log('Title element:', title);
+        console.log('Total images element:', totalImages);
+        
+        // Set title (even though it's hidden in CSS)
+        if (title) title.textContent = productName;
+        if (totalImages) totalImages.textContent = images.length;
+        
+        // No need for thumbnails in simple style
+        this.updateMainImage();
+        
+        console.log('Setting modal display to flex');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        console.log('Image gallery should now be visible');
+    }
+
+    closeImageGallery() {
+        const modal = document.getElementById('image-gallery-modal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        this.isImageGalleryOpen = false;
+    }
+
+    updateMainImage() {
+        const mainImage = document.querySelector('.main-gallery-image');
+        const currentCounter = document.querySelector('.current-image');
+        const imagePath = `images/shop/${this.currentImageFolder}/${this.currentImages[this.currentImageIndex]}`;
+        
+        console.log('Updating main image to:', imagePath);
+        console.log('Main image element:', mainImage);
+        console.log('Current counter element:', currentCounter);
+        
+        if (mainImage) {
+            mainImage.src = imagePath;
+        }
+        if (currentCounter) {
+            currentCounter.textContent = this.currentImageIndex + 1;
+        }
+    }
+
+    createThumbnails() {
+        const thumbnailsContainer = document.querySelector('.image-thumbnails');
+        thumbnailsContainer.innerHTML = '';
+
+        this.currentImages.forEach((image, index) => {
+            const imagePath = `images/shop/${this.currentImageFolder}/${image}`;
+            const thumbnail = document.createElement('div');
+            thumbnail.className = `thumbnail ${index === this.currentImageIndex ? 'active' : ''}`;
+            thumbnail.innerHTML = `<img src="${imagePath}" alt="Thumbnail ${index + 1}">`;
+            
+            thumbnail.addEventListener('click', () => {
+                this.currentImageIndex = index;
+                this.updateMainImage();
+                this.updateThumbnailActive();
+            });
+            
+            thumbnailsContainer.appendChild(thumbnail);
+        });
+    }
+
+    updateThumbnailActive() {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumb, index) => {
+            thumb.classList.toggle('active', index === this.currentImageIndex);
+        });
+    }
+
+    previousImage() {
+        this.currentImageIndex = this.currentImageIndex > 0 
+            ? this.currentImageIndex - 1 
+            : this.currentImages.length - 1;
+        this.updateMainImage();
+        this.updateThumbnailActive();
+    }
+
+    nextImage() {
+        this.currentImageIndex = this.currentImageIndex < this.currentImages.length - 1 
+            ? this.currentImageIndex + 1 
+            : 0;
+        this.updateMainImage();
+        this.updateThumbnailActive();
     }
 }
 

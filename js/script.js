@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Language Toggle Functionality
     const langBtns = document.querySelectorAll('.lang-btn');
-    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
+    let currentLang = localStorage.getItem('selectedLanguage') || 'hr';
 
     // Set initial language
     setLanguage(currentLang);
@@ -221,9 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize scroll-based animations
     initScrollAnimations();
-    
-    // Make sure philosophy section is visible
-    ensurePhilosophySectionVisible();
     
     // Initialize inspirations gallery
     initInspirationGallery();
@@ -499,19 +496,27 @@ function initAboutSlider() {
     let currentAboutSlide = 0;
     
     function updateAboutSlider() {
+        console.log('Updating about slider, current slide:', currentAboutSlide);
         aboutSlides.forEach((slide, index) => {
             slide.classList.remove('active');
+            console.log('Processing slide', index, 'data-index:', slide.getAttribute('data-index'));
             
             if (index === currentAboutSlide) {
                 slide.classList.add('active');
+                console.log('Activating slide', index, 'Element:', slide);
+                console.log('Slide classes after activation:', slide.className);
+                console.log('Slide computed style display:', window.getComputedStyle(slide).display);
                 
                 // Clear any inline styles to let CSS handle display
                 slide.style.display = '';
                 slide.style.opacity = '';
                 slide.style.visibility = '';
                 slide.style.background = '';
+            } else {
+                console.log('Deactivating slide', index);
             }
         });
+        console.log('About slider update complete');
     }
     
     // Previous slide
@@ -519,6 +524,7 @@ function initAboutSlider() {
         e.preventDefault();
         console.log('About prev clicked');
         currentAboutSlide = currentAboutSlide === 0 ? aboutSlides.length - 1 : currentAboutSlide - 1;
+        console.log('Moving to slide:', currentAboutSlide);
         updateAboutSlider();
     });
     
@@ -527,7 +533,33 @@ function initAboutSlider() {
         e.preventDefault();
         console.log('About next clicked');
         currentAboutSlide = currentAboutSlide === aboutSlides.length - 1 ? 0 : currentAboutSlide + 1;
+        console.log('Moving to slide:', currentAboutSlide);
         updateAboutSlider();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        // Only handle keyboard navigation when about section is visible/in focus
+        const aboutSection = document.querySelector('#about');
+        if (!aboutSection) return;
+        
+        // Check if about section is in viewport or if we're currently focused on about content
+        const aboutRect = aboutSection.getBoundingClientRect();
+        const isAboutVisible = aboutRect.top < window.innerHeight && aboutRect.bottom > 0;
+        
+        if (isAboutVisible) {
+            if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                console.log('About left arrow pressed');
+                currentAboutSlide = currentAboutSlide === 0 ? aboutSlides.length - 1 : currentAboutSlide - 1;
+                updateAboutSlider();
+            } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                console.log('About right arrow pressed');
+                currentAboutSlide = currentAboutSlide === aboutSlides.length - 1 ? 0 : currentAboutSlide + 1;
+                updateAboutSlider();
+            }
+        }
     });
     
     // Initialize
@@ -538,37 +570,6 @@ function initAboutSlider() {
 // Shop category functionality removed - handled by simple-gallery.js
 
 // Ensure Philosophy Section is Visible
-function ensurePhilosophySectionVisible() {
-    const philosophySection = document.querySelector('.philosophy-cards');
-    if (philosophySection) {
-        console.log('Philosophy section found:', philosophySection);
-        
-        // Make sure it's visible
-        philosophySection.style.display = 'flex';
-        philosophySection.style.visibility = 'visible';
-        philosophySection.style.opacity = '1';
-        
-        // Check if content exists
-        const cardContent = philosophySection.querySelector('.card-content');
-        if (cardContent) {
-            console.log('Card content found:', cardContent);
-            cardContent.style.display = 'flex';
-            cardContent.style.visibility = 'visible';
-        } else {
-            console.error('Card content not found!');
-        }
-        
-        // Check if text exists
-        const textElements = philosophySection.querySelectorAll('p');
-        console.log('Text elements found:', textElements.length);
-        textElements.forEach((p, i) => {
-            console.log(`Text ${i}:`, p.textContent.substring(0, 50) + '...');
-        });
-    } else {
-        console.error('Philosophy section not found!');
-    }
-}
-
 // Inspirations Gallery Functionality
 // Global flag to prevent multiple initializations
 let inspirationGalleryInitialized = false;
