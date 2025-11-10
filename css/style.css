@@ -2642,32 +2642,61 @@ p {
 
 /* Mobile Responsive for In-Use Gallery */
 @media (max-width: 768px) {
-    .in-use-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+    .ceramics-in-use-section {
+        padding: 2rem 0;
     }
     
-    .ceramics-in-use-section {
-        padding: 3rem 0;
+    .ceramics-in-use-section .container {
+        padding: 0 20px;
     }
     
     .ceramics-in-use-section h2 {
-        font-size: 2rem;
+        font-size: 1.5rem;
         margin-bottom: 2rem;
+        padding-left: 0;
+        text-align: center;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .in-use-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-width: 100%;
+        padding: 0 10px;
     }
     
     .in-use-item {
         border-radius: 8px;
     }
+    
+    .in-use-item:hover {
+        transform: none;
+    }
 }
 
 @media (max-width: 480px) {
-    .in-use-grid {
-        gap: 10px;
+    .ceramics-in-use-section {
+        padding: 1.5rem 0;
     }
     
     .ceramics-in-use-section .container {
-        padding: 0 1rem;
+        padding: 0 15px;
+    }
+    
+    .ceramics-in-use-section h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .in-use-grid {
+        gap: 10px;
+        padding: 0 5px;
+    }
+    
+    .in-use-item {
+        border-radius: 6px;
     }
 }
 
