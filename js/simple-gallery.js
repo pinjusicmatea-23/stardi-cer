@@ -29,20 +29,40 @@ class SimpleGallery {
 
     parseCSV(text) {
         const lines = text.trim().split('\n');
-        const headers = lines[0].split(',');
+        const headers = lines[0].split(',').map(h => h.trim());
         const products = [];
 
         for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].split(',');
-            const product = {};
+            const line = lines[i];
+            if (!line.trim()) continue; // Skip empty lines
             
+            // More robust CSV parsing to handle commas in values
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    values.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            values.push(current.trim()); // Add the last value
+            
+            const product = {};
             headers.forEach((header, index) => {
-                product[header.trim()] = values[index]?.trim() || '';
+                product[header] = values[index] || '';
             });
             
             products.push(product);
         }
         
+        console.log('Parsed products:', products);
         return products;
     }
 
@@ -127,7 +147,9 @@ class SimpleGallery {
         // Handle gallery close
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('gallery-close') || 
-                e.target.classList.contains('gallery-overlay')) {
+                e.target.classList.contains('gallery-overlay') ||
+                e.target.classList.contains('category-close-btn') ||
+                e.target.id === 'categoryCloseBtn') {
                 this.closeGallery();
             }
         });
@@ -197,12 +219,15 @@ class SimpleGallery {
         console.log('Opening inquiry modal for:', product);
         this.selectedProduct = product;
         
+        // Get current language
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        
         const modal = document.getElementById('email-modal');
         console.log('Modal element found:', modal);
         
         if (!modal) {
             console.error('Email modal not found');
-            alert(this.isHr ? 'Pošaljite e-mail na: stardiceramic@gmail.com' : 'Send email to: stardiceramic@gmail.com');
+            alert(this.currentLanguage === 'hr' ? 'Pošaljite e-mail na: stardiceramic@gmail.com' : 'Send email to: stardiceramic@gmail.com');
             return;
         }
         
@@ -215,7 +240,7 @@ class SimpleGallery {
         
         console.log('Modal elements found:', { title, emailLabel, messageLabel, sendBtn, cancelBtn });
         
-        if (this.isHr) {
+        if (this.currentLanguage === 'hr') {
             title.textContent = `Upit za: ${product.name}`;
             emailLabel.textContent = 'Vaš e-mail:';
             messageLabel.textContent = 'Poruka:';
@@ -232,7 +257,7 @@ class SimpleGallery {
         // Pre-fill message
         const messageTextarea = modal.querySelector('textarea[name="message"]');
         const productName = product.name;
-        const defaultMessage = this.isHr 
+        const defaultMessage = this.currentLanguage === 'hr' 
             ? `Pozdrav,\n\nZanimaju me informacije o proizvodu "${productName}". Molim vas pošaljite mi više detalja o dostupnosti i cijeni.\n\nHvala!`
             : `Hello,\n\nI am interested in the product "${productName}". Please send me more details about availability and pricing.\n\nThank you!`;
         
@@ -251,7 +276,7 @@ class SimpleGallery {
         const message = formData.get('message');
         
         if (!email || !message) {
-            alert(this.isHr ? 'Molimo unesite sve potrebne podatke.' : 'Please fill in all required fields.');
+            alert(this.currentLanguage === 'hr' ? 'Molimo unesite sve potrebne podatke.' : 'Please fill in all required fields.');
             return;
         }
         
@@ -260,44 +285,30 @@ class SimpleGallery {
         // Show loading state
         const sendBtn = form.querySelector('.send-btn');
         const originalText = sendBtn.textContent;
-        sendBtn.textContent = this.isHr ? 'Šalje...' : 'Sending...';
+        sendBtn.textContent = this.currentLanguage === 'hr' ? 'Šalje...' : 'Sending...';
         sendBtn.disabled = true;
         
         try {
-            // Send email using EmailJS
-            const templateParams = {
-                name: email,  // This will show in {{name}} field
-                email: email, // Backup email field
-                message: `Customer Email: ${email}\n\nProduct: ${productName}\n\nMessage:\n${message}`,
-                title: this.isHr ? `Upit za proizvod: ${productName}` : `Product Inquiry: ${productName}`
-            };
-            
-            console.log('Sending email with params:', templateParams);
-            
-            const response = await emailjs.send(
-                'service_ukyimdc',     // Your service ID
-                'template_00oh9rj',    // Your template ID
-                templateParams,
-                'MxXGVxOPREHvMstth'    // Your public key
-            );
-            
-            console.log('Email sent successfully:', response);
+            // For now, use mailto as fallback
+            const subject = encodeURIComponent(`Product Inquiry: ${productName}`);
+            const body = encodeURIComponent(`Customer Email: ${email}\n\nProduct: ${productName}\n\nMessage:\n${message}`);
+            window.open(`mailto:stardi.ceramics@gmail.com?subject=${subject}&body=${body}`, '_blank');
             
             // Close modal
             document.getElementById('email-modal').style.display = 'none';
             
             // Show success message
-            alert(this.isHr ? 
-                'E-mail je uspješno poslan! Odgovorit ćemo vam uskoro.' : 
-                'Email sent successfully! We will respond to you soon.');
+            alert(this.currentLanguage === 'hr' ? 
+                'E-mail program se otvorio. Molimo pošaljite e-mail.' : 
+                'Email program opened. Please send the email.');
                 
         } catch (error) {
-            console.error('Error sending email:', error);
+            console.error('Error opening email:', error);
             
             // Show error message
-            alert(this.isHr ? 
-                'Greška pri slanju e-maila. Molimo pokušajte ponovo ili nas kontaktirajte direktno na stardiceramic@gmail.com' : 
-                'Error sending email. Please try again or contact us directly at stardiceramic@gmail.com');
+            alert(this.currentLanguage === 'hr' ? 
+                'Greška pri otvaranju e-maila. Molimo kontaktirajte nas direktno na stardi.ceramics@gmail.com' : 
+                'Error opening email. Please contact us directly at stardi.ceramics@gmail.com');
         } finally {
             // Reset button
             sendBtn.textContent = originalText;
@@ -312,20 +323,19 @@ class SimpleGallery {
         
         // Map category names
         const categoryMap = {
-            'cups': 'cups',
-            'plates': 'plates', 
-            'bowls': 'bowls',
-            'waves': 'waves',
-            'candles': 'candle holders'
+            'candles': 'candelsticks'
         };
         
         const csvCategory = categoryMap[category] || category;
+        console.log('Looking for CSV category:', csvCategory);
+        console.log('All products:', this.products);
+        
         const categoryProducts = this.products.filter(product => 
-            product.category.toLowerCase() === csvCategory.toLowerCase() && 
-            product.in_stock === 'yes'
+            product.category.toLowerCase() === csvCategory.toLowerCase()
         );
 
         console.log('Found products:', categoryProducts.length);
+        console.log('Category products:', categoryProducts);
         this.updateGalleryContent(categoryProducts);
         
         const gallery = document.getElementById('simple-gallery');
@@ -341,6 +351,9 @@ class SimpleGallery {
     }
 
     updateGalleryContent(products) {
+        // Get current language each time gallery opens
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        
         // Update title
         const titleElement = document.querySelector('.gallery-title');
         const categoryNames = {
@@ -348,11 +361,13 @@ class SimpleGallery {
             'plates': { en: 'PLATES COLLECTION', hr: 'KOLEKCIJA TANJURIĆA' },
             'bowls': { en: 'BOWLS COLLECTION', hr: 'KOLEKCIJA ZDJELICA' },
             'waves': { en: 'WAVES COLLECTION', hr: 'KOLEKCIJA VALOVA' },
-            'candles': { en: 'CANDLES COLLECTION', hr: 'KOLEKCIJA SVIJEĆNJAKA' }
+            'candles': { en: 'CANDLES COLLECTION', hr: 'KOLEKCIJA SVIJEĆNJAKA' },
+            'trays': { en: 'TRAYS COLLECTION', hr: 'KOLEKCIJA PLADNJIĆA' },
+            'vases': { en: 'VASES COLLECTION', hr: 'KOLEKCIJA VAZA' }
         };
 
         const categoryName = categoryNames[this.currentCategory];
-        if (categoryName) {
+        if (categoryName && titleElement) {
             titleElement.textContent = this.currentLanguage === 'en' ? categoryName.en : categoryName.hr;
         }
 
@@ -362,12 +377,17 @@ class SimpleGallery {
     }
 
     createProductCard(product) {
+        // Ensure current language is up to date
+        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        
         const folderMap = {
             'cups': 'cups',
             'plates': 'plates',
             'bowls': 'bowls', 
             'waves': 'waves',
-            'candle holders': 'candles'
+            'candelsticks': 'candles',
+            'trays': 'trays',
+            'vases': 'vases'
         };
         
         const folder = folderMap[product.category.toLowerCase()] || 'misc';
