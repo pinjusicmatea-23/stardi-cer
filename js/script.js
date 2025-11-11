@@ -180,6 +180,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Force update shop category titles specifically
+        const shopCategoryTitles = document.querySelectorAll('.product-title[data-en][data-hr]');
+        shopCategoryTitles.forEach(title => {
+            const translation = title.getAttribute(`data-${lang}`);
+            if (translation) {
+                title.textContent = translation;
+            }
+        });
+
         // Update page language attribute
         document.documentElement.lang = lang === 'hr' ? 'hr' : 'en';
     }

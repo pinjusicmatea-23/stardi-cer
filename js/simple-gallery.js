@@ -568,7 +568,7 @@ class SimpleGallery {
             'bowls': { en: 'BOWLS COLLECTION', hr: 'KOLEKCIJA ZDJELICA' },
             'waves': { en: 'WAVES COLLECTION', hr: 'KOLEKCIJA VALOVA' },
             'candles': { en: 'CANDLES COLLECTION', hr: 'KOLEKCIJA SVIJEĆNJAKA' },
-            'trays': { en: 'TRAYS COLLECTION', hr: 'KOLEKCIJA PLADNJIĆA' },
+            'trays': { en: 'TRAYS COLLECTION', hr: 'KOLEKCIJA PLADNJEVA' },
             'vases': { en: 'VASES COLLECTION', hr: 'KOLEKCIJA VAZA' }
         };
 
