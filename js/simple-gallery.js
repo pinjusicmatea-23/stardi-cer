@@ -447,26 +447,74 @@ class SimpleGallery {
         sendBtn.disabled = true;
         
         try {
-            // For now, use mailto as fallback
-            const subject = encodeURIComponent(`Product Inquiry: ${productName}`);
-            const body = encodeURIComponent(`Customer Email: ${email}\n\nProduct: ${productName}\n\nMessage:\n${message}`);
-            window.open(`mailto:stardi.ceramics@gmail.com?subject=${subject}&body=${body}`, '_blank');
-            
-            // Close modal
-            document.getElementById('email-modal').style.display = 'none';
-            
-            // Show success message
-            alert(this.currentLanguage === 'hr' ? 
-                'E-mail program se otvorio. Molimo pošaljite e-mail.' : 
-                'Email program opened. Please send the email.');
+            // Check if EmailJS is available
+            if (typeof emailjs !== 'undefined') {
+                console.log('EmailJS is available, attempting to send...');
+                
+                // Use EmailJS for direct email sending
+                const templateParams = {
+                    name: email, // Customer's email as name
+                    email: email, // Customer's email
+                    message: `Product Inquiry: ${productName}\n\n${message}`,
+                };
+                
+                console.log('Attempting to send email with EmailJS...');
+                console.log('Template params:', templateParams);
+                
+                // Try to send email via EmailJS
+                // Using your service ID and a common template ID pattern
+                const response = await emailjs.send(
+                    'service_ukyimdc', // Your actual EmailJS service ID
+                    'template_00oh9rj', // Your actual template ID
+                    templateParams
+                );
+                
+                console.log('Email sent successfully via EmailJS:', response);
+                
+                // Close modal
+                document.getElementById('email-modal').style.display = 'none';
+                
+                // Show success message
+                alert(this.currentLanguage === 'hr' ? 
+                    'Vaš upit je uspješno poslan! Odgovorit ćemo vam u najkraćem mogućem roku.' : 
+                    'Your inquiry has been sent successfully! We will respond as soon as possible.');
+                    
+                return; // Exit successfully
+                
+            } else {
+                console.log('EmailJS is not available');
+                throw new Error('EmailJS not available');
+            }
                 
         } catch (error) {
-            console.error('Error opening email:', error);
+            console.log('EmailJS failed or not configured, using mailto fallback:', error);
             
-            // Show error message
-            alert(this.currentLanguage === 'hr' ? 
-                'Greška pri otvaranju e-maila. Molimo kontaktirajte nas direktno na stardi.ceramics@gmail.com' : 
-                'Error opening email. Please contact us directly at stardi.ceramics@gmail.com');
+            // Fallback to mailto
+            const subject = encodeURIComponent(`Product Inquiry: ${productName}`);
+            const body = encodeURIComponent(`Customer Email: ${email}\n\nProduct: ${productName}\n\nMessage:\n${message}`);
+            
+            try {
+                window.open(`mailto:stardi.ceramics@gmail.com?subject=${subject}&body=${body}`, '_blank');
+                
+                // Close modal
+                document.getElementById('email-modal').style.display = 'none';
+                
+                // Show fallback message
+                alert(this.currentLanguage === 'hr' ? 
+                    'Otvorili smo vaš email program. Molimo pošaljite email kako biste poslali upit.' : 
+                    'We opened your email program. Please send the email to submit your inquiry.');
+                    
+            } catch (mailtoError) {
+                console.error('Mailto also failed:', mailtoError);
+                
+                // Final fallback - show contact info
+                alert(this.currentLanguage === 'hr' ? 
+                    'Molimo kontaktirajte nas direktno na:\nstardi.ceramics@gmail.com\n\nProizvod: ' + productName + '\nVaša poruka: ' + message :
+                    'Please contact us directly at:\nstardi.ceramics@gmail.com\n\nProduct: ' + productName + '\nYour message: ' + message);
+                    
+                // Still close the modal
+                document.getElementById('email-modal').style.display = 'none';
+            }
         } finally {
             // Reset button
             sendBtn.textContent = originalText;
