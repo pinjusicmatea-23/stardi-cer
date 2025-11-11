@@ -1087,8 +1087,10 @@ p {
     }
     
     .video-background video {
-        width: 120%; /* Larger to fill frame completely */
-        height: 120%; /* Larger to fill frame completely */
+        width: 72vh; /* Match frame height after rotation */
+        height: 55vw; /* Match frame width after rotation */
+        min-width: 72vh; /* Ensure minimum coverage */
+        min-height: 55vw; /* Ensure minimum coverage */
         object-fit: cover;
         transform: translate(-50%, -50%) rotate(-90deg); /* Center and rotate */
         position: absolute;
