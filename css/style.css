@@ -1136,7 +1136,7 @@ p {
     
     /* Gallery container spacing */
     .gallery-container {
-        margin: 2rem auto !important;
+        margin: 2rem auto 6rem auto !important; /* Much more bottom margin for spacing before contact */
         width: calc(100% - 2rem) !important;
     }
     
@@ -1153,6 +1153,33 @@ p {
     /* Shop and About sections */
     .shop, .about {
         padding: 0 !important;
+        height: 45vh !important; /* Very compact for larger mobile screens */
+        max-height: 45vh !important;
+    }
+    
+    .shop-slider-container, .about-slider-container {
+        height: 45vh !important; /* Very compact for larger mobile screens */
+        max-height: 45vh !important;
+    }
+    
+    .shop-slider, .about-slider {
+        height: 45vh !important; /* Very compact for larger mobile screens */
+        max-height: 45vh !important;
+    }
+    
+    .shop-slide, .about-slide {
+        height: 45vh !important; /* Very compact for larger mobile screens */
+    }
+    
+    /* Better mobile product card visibility */
+    .products-grid {
+        padding: 0 10px !important;
+        margin-top: 0 !important;
+    }
+    
+    .shop-slide {
+        padding: 10px 0 !important; /* Reduce both top and bottom white space */
+        justify-content: flex-start !important; /* Align content to top */
     }
     
     /* Contact section */
@@ -1173,6 +1200,32 @@ p {
 
 /* Extra small mobile - even more dense */
 @media (max-width: 480px) {
+    /* Shop and About sections - extremely compact */
+    .shop, .about {
+        height: 40vh !important; /* Extremely compact for small screens */
+        max-height: 40vh !important;
+    }
+    
+    .shop-slider-container, .about-slider-container {
+        height: 40vh !important;
+        max-height: 40vh !important;
+    }
+    
+    .shop-slider, .about-slider {
+        height: 40vh !important;
+        max-height: 40vh !important;
+    }
+    
+    .shop-slide, .about-slide {
+        height: 40vh !important;
+    }
+    
+    /* Shop section optimization */
+    .shop-slide {
+        padding: 5px 0 !important; /* Minimal white space */
+        justify-content: flex-start !important;
+    }
+    
     /* Further reduce video hero height */
     .video-hero {
         min-height: 60vh !important;
@@ -1206,7 +1259,7 @@ p {
     
     /* Tighter gallery spacing */
     .gallery-container {
-        margin: 1rem auto !important;
+        margin: 1rem auto 5rem auto !important; /* Much more bottom margin for mobile spacing */
     }
     
     /* Contact section */
@@ -1221,7 +1274,7 @@ p {
     gap: 20px;
     max-width: none;
     width: calc(100% - 8rem);
-    margin: 80px auto;
+    margin: 80px auto 240px auto; /* Much more bottom margin for generous spacing before contact */
     padding: 0;
 }
 
@@ -1594,6 +1647,44 @@ p {
     align-items: center;
     background: #f8f8f8;
     overflow: hidden;
+}
+
+/* Shop slider arrows - same as about section */
+.shop-slider-container .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #333;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-family: 'Montserrat', sans-serif;
+    z-index: 20;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.shop-slider-container .slider-prev {
+    left: 2rem;
+    z-index: 30;
+}
+
+.shop-slider-container .slider-next {
+    right: 2rem;
+    z-index: 30;
+}
+
+.shop-slider-container .slider-arrow:hover {
+    color: #000;
+    transform: translateY(-50%) scale(1.1);
 }
 
 .shop-slider {
@@ -2491,20 +2582,37 @@ html[lang="hr"] .product-title {
 
 /* Responsive for about section */
 @media (max-width: 768px) {
+    .about-slide {
+        padding: 20px 0; /* Reduce vertical white space */
+    }
+    
     .about-image {
-        width: 180px; /* Reduced from 220px */
-        height: 180px; /* Reduced from 220px */
-        margin-bottom: 1rem; /* Reduced from 3rem */
+        width: 260px; /* Match product card width */
+        height: 260px; /* Match product card width */
+        margin-bottom: 0.5rem; /* Further reduced white space */
     }
     
     .about-title {
-        font-size: 2rem; /* Reduced from 2.5rem */
+        font-size: 2.2rem; /* Slightly increased for better visibility */
         margin-bottom: 0; /* Remove any bottom margin */
     }
     
     .about-text {
-        font-size: 1rem;
-        padding: 0 20px;
+        font-size: 0.9rem; /* Reduced font size for index 1 */
+        padding: 0 60px; /* Increased horizontal padding to avoid arrows */
+        line-height: 1.6; /* Tighter line spacing */
+    }
+    
+    /* Center arrows precisely on image center for mobile */
+    .about-slider-container .slider-arrow {
+        top: 22.5vh; /* Adjusted for 45vh container */
+        transform: translateY(-50%); /* Center the arrow itself */
+    }
+    
+    /* Shop section arrows positioned differently for product images */
+    .shop-slider-container .slider-arrow {
+        top: 18vh; /* Higher position for 45vh container */
+        transform: translateY(-50%); /* Center the arrow itself */
     }
     
     .about-slider-container .slider-prev {
@@ -2518,15 +2626,37 @@ html[lang="hr"] .product-title {
 
 /* Extra mobile optimization for about section */
 @media (max-width: 480px) {
+    .about-slide {
+        padding: 10px 0 !important; /* Further reduce vertical white space */
+    }
+    
     .about-image {
-        width: 150px !important;
-        height: 150px !important;
-        margin-bottom: 0.5rem !important;
+        width: 240px !important; /* Match product card width */
+        height: 240px !important; /* Match product card width */
+        margin-bottom: 0.3rem !important; /* Minimal white space */
     }
     
     .about-title {
-        font-size: 1.8rem !important;
+        font-size: 2rem !important; /* Increased for better visibility */
         margin-bottom: 0 !important;
+    }
+    
+    .about-text {
+        font-size: 0.85rem !important; /* Smaller font for index 1 */
+        padding: 0 50px !important; /* Adequate padding to avoid arrows */
+        line-height: 1.5 !important; /* Tighter line spacing */
+    }
+    
+    /* Center arrows precisely on image center for small mobile */
+    .about-slider-container .slider-arrow {
+        top: 20vh !important; /* Adjusted for 40vh container */
+        transform: translateY(-50%) !important; /* Center the arrow itself */
+    }
+    
+    /* Shop section arrows positioned differently for product images */
+    .shop-slider-container .slider-arrow {
+        top: 16vh !important; /* Higher position for 40vh container */
+        transform: translateY(-50%) !important; /* Center the arrow itself */
     }
 }
 
@@ -4293,7 +4423,7 @@ button:focus {
     }
     
     .products-grid {
-        padding: 0 30px;
+        padding: 0 15px;
         gap: 20px;
     }
     
@@ -4306,12 +4436,12 @@ button:focus {
     }
     
     .product-item-info {
-        padding: 20px;
+        padding: 12px;
     }
     
     .product-item-name {
         font-size: 1.1rem;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
     
     .scroll-indicator {
@@ -4335,7 +4465,7 @@ button:focus {
     }
     
     .products-grid {
-        padding: 0 20px;
+        padding: 0 10px;
         gap: 15px;
     }
     
@@ -4348,11 +4478,12 @@ button:focus {
     }
     
     .product-item-info {
-        padding: 15px;
+        padding: 10px;
     }
     
     .product-item-name {
         font-size: 1rem;
+        margin-bottom: 6px;
     }
     
     .detail-label {
