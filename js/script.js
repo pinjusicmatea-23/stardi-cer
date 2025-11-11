@@ -718,7 +718,7 @@ function initInspirationGallery() {
     
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
-        if (modal.style.display !== 'flex') return;
+        if (!modal.classList.contains('active')) return;
         
         if (e.key === 'Escape') {
             hideModal();

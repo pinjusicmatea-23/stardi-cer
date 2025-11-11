@@ -1065,9 +1065,10 @@ p {
 @media (max-width: 768px) {
     .video-hero {
         flex-direction: column;
-        height: auto;
-        min-height: 70vh; /* Reduced from 100vh */
-        padding: 1rem 0; /* Reduced from 2rem */
+        height: 100vh; /* Full screen height like desktop */
+        min-height: 100vh;
+        padding: 3rem 2rem 2rem 2rem; /* Padding for frame effect */
+        box-sizing: border-box;
     }
     
     .video-background {
@@ -1075,17 +1076,24 @@ p {
         top: auto;
         left: auto;
         transform: none;
-        width: 80%;
-        height: 40vh; /* Reduced from 50vh */
-        margin: 0 auto 1rem auto; /* Reduced margin */
-        border-radius: 12px;
+        width: 55%; /* Narrower for more vertical look */
+        height: 72vh; /* Slightly taller for more vertical proportions */
+        margin: 0 auto 2rem auto; /* Center with bottom margin for text */
+        border-radius: 12px; /* Rounded corners back */
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .video-background video {
-        width: 50vh;
-        height: 80vw;
+        width: 120%; /* Larger to fill frame completely */
+        height: 120%; /* Larger to fill frame completely */
         object-fit: cover;
-        transform: translate(-50%, -50%) rotate(-90deg);
+        transform: translate(-50%, -50%) rotate(-90deg); /* Center and rotate */
+        position: absolute;
+        top: 50%;
+        left: 50%;
     }
     
     .video-hero-content {
@@ -1645,7 +1653,6 @@ p {
     margin-bottom: 4rem;
     overflow: hidden;
     border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
 .product-image img {
@@ -1687,6 +1694,11 @@ p {
     color: #333;
     text-transform: uppercase;
     text-align: center;
+}
+
+/* Adjust letter spacing for Croatian longer words */
+html[lang="hr"] .product-title {
+    letter-spacing: 0.1em;
 }
 
 .clickable-title {
@@ -1766,7 +1778,6 @@ p {
     border-radius: 10px;
     transition: transform 0.3s ease;
     background: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
 }
@@ -1862,6 +1873,11 @@ p {
         line-height: 0.9;
         margin: 0 0 2rem 0;
         text-align: center;
+    }
+    
+    /* Adjust letter spacing for Croatian longer words on smaller screens */
+    html[lang="hr"] .product-title {
+        letter-spacing: 0.05em;
     }
     
     .slider-prev {
@@ -2417,7 +2433,6 @@ p {
     margin-bottom: 2rem; /* Reduced from 4rem */
     overflow: hidden;
     border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
 .about-slide[data-index="0"] .about-image img {
@@ -2559,6 +2574,13 @@ p {
     letter-spacing: 0.1em;
     margin-bottom: 10px;
     color: #2c2c2c;
+}
+
+/* Prevent phone number auto-styling */
+.contact-item p,
+.contact-item p a {
+    color: #2c2c2c !important;
+    text-decoration: none !important;
 }
 
 .social-link {
@@ -2979,7 +3001,6 @@ button:focus {
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
     opacity: 0;
     transform: translateY(30px);
@@ -3160,7 +3181,6 @@ button:focus {
 
 .product-item:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 .product-item-image {
@@ -3743,6 +3763,15 @@ button:focus {
     transform: translateY(0);
 }
 
+/* Gallery Disclaimer Container */
+.gallery-disclaimer-container {
+    position: relative;
+    padding: 20px 60px;
+    background: transparent;
+    display: flex;
+    justify-content: flex-start;
+}
+
 /* Gallery Disclaimer */
 .gallery-disclaimer {
     width: 630px;
@@ -3754,8 +3783,59 @@ button:focus {
     border-radius: 8px;
     line-height: 1.6;
     font-style: italic;
-    margin-top: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0;
+}
+
+/* Mobile Responsive Styles for Simple Gallery */
+@media (max-width: 768px) {
+    .simple-gallery {
+        height: 100vh; /* Make sure it uses full height */
+    }
+    
+    .simple-gallery .gallery-container {
+        height: 95vh; /* Increase from default to give more space */
+        max-height: 95vh;
+    }
+    
+    .simple-gallery .gallery-content {
+        padding: 0; /* Remove all padding */
+    }
+    
+    .simple-gallery .gallery-scroll {
+        padding: 0; /* No padding so cards go to screen edge */
+    }
+    
+    .simple-gallery .gallery-grid {
+        gap: 20px;
+        padding-left: 0; /* No padding */
+        margin-left: 0; /* No margin - allow cards to scroll to very edge */
+        padding-top: 20px; /* Only top padding for spacing from header */
+    }
+    
+    .simple-gallery .products-row {
+        display: flex;
+        flex-direction: row; /* Keep horizontal scrolling */
+        gap: 20px;
+        padding-left: 30px; /* Initial alignment with title */
+    }
+    
+    .simple-gallery .product-card {
+        width: 280px; /* Fixed width for horizontal scrolling */
+        flex-shrink: 0; /* Prevent cards from shrinking */
+        min-height: auto;
+    }
+    
+    .gallery-disclaimer-container {
+        padding: 0 20px 10px 20px; /* Removed top padding, minimal bottom padding */
+    }
+    
+    .gallery-disclaimer {
+        width: 100%;
+        max-width: none;
+        padding: 5px; /* Reduced from 10px to 5px */
+        font-size: 10px; /* Smaller font for mobile */
+        line-height: 1.4; /* Tighter line height */
+    }
 }
 
 /* Image Gallery Modal Styles - Simple Style */
@@ -4123,7 +4203,7 @@ button:focus {
     }
     
     .simple-gallery .gallery-content {
-        padding: 20px 30px;
+        padding: 10px 30px; /* Reduced top padding from 20px to 10px */
     }
     
     .simple-gallery .product-card {

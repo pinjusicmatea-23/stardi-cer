@@ -140,6 +140,9 @@ class SimpleGallery {
                             </div>
                         </div>
                     </div>
+                    <div class="gallery-disclaimer-container" id="gallery-disclaimer-container">
+                        <!-- Disclaimer text will be inserted here -->
+                    </div>
                 </div>
             </div>
             
@@ -521,16 +524,27 @@ class SimpleGallery {
         // Update grid
         const grid = document.getElementById('gallery-grid');
         
-        // Add disclaimer text below product cards
-        const disclaimerText = this.currentLanguage === 'hr' 
-            ? 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).'
-            : 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).';
+        // Add disclaimer text in separate container
+        const disclaimerContainer = document.getElementById('gallery-disclaimer-container');
+        const isMobile = window.innerWidth <= 768;
+        
+        let disclaimerText;
+        if (this.currentLanguage === 'hr') {
+            disclaimerText = isMobile 
+                ? 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).'
+                : 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).';
+        } else {
+            disclaimerText = isMobile
+                ? 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).'
+                : 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).';
+        }
         
         const disclaimerHtml = `<div class="gallery-disclaimer">${disclaimerText}</div>`;
         
         const productsHtml = `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`;
         
-        grid.innerHTML = productsHtml + disclaimerHtml;
+        grid.innerHTML = productsHtml;
+        disclaimerContainer.innerHTML = disclaimerHtml;
     }
 
     createProductCard(product) {
