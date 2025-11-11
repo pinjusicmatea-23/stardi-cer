@@ -2598,7 +2598,7 @@ html[lang="hr"] .product-title {
     }
     
     .about-text {
-        font-size: 0.9rem; /* Reduced font size for index 1 */
+        font-size: 0.8rem; /* Smaller font size so full text is visible */
         padding: 0 60px; /* Increased horizontal padding to avoid arrows */
         line-height: 1.6; /* Tighter line spacing */
     }
@@ -2642,7 +2642,7 @@ html[lang="hr"] .product-title {
     }
     
     .about-text {
-        font-size: 0.85rem !important; /* Smaller font for index 1 */
+        font-size: 0.75rem !important; /* Even smaller font for index 1 to show full text */
         padding: 0 50px !important; /* Adequate padding to avoid arrows */
         line-height: 1.5 !important; /* Tighter line spacing */
     }
@@ -4404,11 +4404,11 @@ button:focus {
 
 @media (max-width: 768px) {
     .curtain-header {
-        padding: 20px 30px;
+        padding: 10px 30px; /* Reduced top/bottom padding from 20px to 10px */
     }
     
     .curtain-title {
-        font-size: 1.5rem;
+        font-size: 1.3rem !important; /* Smaller font size from 1.5rem to 1.3rem */
         letter-spacing: 0.2em;
     }
     
@@ -4416,6 +4416,16 @@ button:focus {
         font-size: 2.5rem;
         width: 50px;
         height: 50px;
+    }
+    
+    .shop-category-content h2 {
+        font-size: 1.1rem !important;
+        margin-bottom: 15px;
+    }
+    
+    #categoryTitle {
+        font-size: 1.1rem !important;
+        margin-bottom: 15px;
     }
     
     .curtain-content {
@@ -4436,12 +4446,12 @@ button:focus {
     }
     
     .product-item-info {
-        padding: 12px;
+        padding: 6px 10px 8px 10px !important; /* More compact padding */
     }
     
     .product-item-name {
-        font-size: 1.1rem;
-        margin-bottom: 8px;
+        font-size: 0.95rem !important; /* Smaller font */
+        margin-bottom: 4px !important; /* Less margin */
     }
     
     .scroll-indicator {
@@ -4453,11 +4463,21 @@ button:focus {
 
 @media (max-width: 480px) {
     .curtain-header {
-        padding: 15px 20px;
+        padding: 8px 20px; /* Further reduced padding for small screens */
     }
     
     .curtain-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem !important; /* Even smaller font for small screens */
+    }
+    
+    .shop-category-content h2 {
+        font-size: 0.9rem !important;
+        margin-bottom: 10px;
+    }
+    
+    #categoryTitle {
+        font-size: 0.9rem !important;
+        margin-bottom: 10px;
     }
     
     .curtain-content {
@@ -4478,12 +4498,12 @@ button:focus {
     }
     
     .product-item-info {
-        padding: 10px;
+        padding: 4px 8px 6px 8px !important; /* Very compact padding */
     }
     
     .product-item-name {
-        font-size: 1rem;
-        margin-bottom: 6px;
+        font-size: 0.85rem !important; /* Even smaller font */
+        margin-bottom: 3px !important; /* Minimal margin */
     }
     
     .detail-label {
