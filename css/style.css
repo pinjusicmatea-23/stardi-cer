@@ -2715,6 +2715,13 @@ html[lang="hr"] .product-title {
     text-decoration: none !important;
 }
 
+.order-info {
+    font-size: 0.85rem !important;
+    line-height: 1.4;
+    color: #666 !important;
+    font-style: italic;
+}
+
 .social-link {
     display: block;
     text-decoration: none;

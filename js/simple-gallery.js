@@ -41,7 +41,10 @@ class SimpleGallery {
             'bowls': 'bowls', 
             'plates': 'plates',
             'candles': 'candles',
-            'vases': 'vases'
+            'vases': 'vases',
+            'trays': 'trays',
+            'waves': 'waves',
+            'candelsticks': 'candles'
         };
 
         for (const product of this.products) {
@@ -53,20 +56,30 @@ class SimpleGallery {
             
             // Check for additional images (_2, _3, _4, _5)
             for (let i = 2; i <= 5; i++) {
-                const additionalImageName = `${baseImageName}_${i}${imageExtension}`;
-                const imagePath = `images/shop/${folder}/${additionalImageName}`;
+                let imageFound = false;
                 
-                // Try to check if image exists
-                try {
-                    const imageExists = await this.checkImageExists(imagePath);
-                    if (imageExists) {
-                        product.images.push(additionalImageName);
-                        console.log(`Found additional image: ${imagePath}`);
-                    } else {
-                        break; // Stop checking if image doesn't exist
+                // Try both lowercase and uppercase extensions
+                const extensions = [imageExtension, imageExtension.toUpperCase()];
+                
+                for (const ext of extensions) {
+                    const additionalImageName = `${baseImageName}_${i}${ext}`;
+                    const imagePath = `images/shop/${folder}/${additionalImageName}`;
+                    
+                    try {
+                        const imageExists = await this.checkImageExists(imagePath);
+                        if (imageExists) {
+                            product.images.push(additionalImageName);
+                            console.log(`Found additional image: ${imagePath}`);
+                            imageFound = true;
+                            break; // Found with this extension, stop trying others
+                        }
+                    } catch (error) {
+                        continue; // Try next extension
                     }
-                } catch (error) {
-                    break; // Stop on error
+                }
+                
+                if (!imageFound) {
+                    break; // Stop checking if no image found for this number
                 }
             }
             
@@ -524,22 +537,10 @@ class SimpleGallery {
         // Update grid
         const grid = document.getElementById('gallery-grid');
         
-        // Add disclaimer text in separate container
+        // Disclaimer text removed from gallery - moved to contact section
         const disclaimerContainer = document.getElementById('gallery-disclaimer-container');
-        const isMobile = window.innerWidth <= 768;
         
-        let disclaimerText;
-        if (this.currentLanguage === 'hr') {
-            disclaimerText = isMobile 
-                ? 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).'
-                : 'Svaki komad je unikat i moguća su mala odstupanja dimenzija.<br>Moguće su različite boje glazure prema dogovoru.<br>Rok isporuke prema dogovoru (5-14 dana).';
-        } else {
-            disclaimerText = isMobile
-                ? 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).'
-                : 'Each piece is unique and slight dimensional deviations are possible.<br>Different glaze colors are possible by agreement.<br>Delivery time by agreement (5-14 days).';
-        }
-        
-        const disclaimerHtml = `<div class="gallery-disclaimer">${disclaimerText}</div>`;
+        const disclaimerHtml = `<div class="gallery-disclaimer" style="display: none;"></div>`;
         
         const productsHtml = `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`;
         
@@ -558,7 +559,8 @@ class SimpleGallery {
             'waves': 'waves',
             'candelsticks': 'candles',
             'trays': 'trays',
-            'vases': 'vases'
+            'vases': 'vases',
+            'candles': 'candles'
         };
         
         const folder = folderMap[product.category.toLowerCase()] || 'misc';
