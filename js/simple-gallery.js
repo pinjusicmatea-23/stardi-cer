@@ -212,7 +212,7 @@ class SimpleGallery {
     bindEvents() {
         console.log('bindEvents called - setting up click listeners');
         
-        // Debug click events on product images - ONLY for multi-image products
+        // Debug click events on product images - now works for ALL images (single and multiple)
         document.addEventListener('click', (e) => {
             console.log('CLICK DETECTED ANYWHERE:', e.target);
             console.log('Click target classList:', e.target.classList);
@@ -230,19 +230,14 @@ class SimpleGallery {
                 const productName = productImage.getAttribute('data-product-name');
                 const category = productImage.getAttribute('data-category');
                 
-                // Only open image gallery if this product has multiple images (has image count badge)
-                const hasImageBadge = productImage.querySelector('.image-count-badge');
-                console.log('Has image count badge:', hasImageBadge);
-                
-                if (images && productName && category && hasImageBadge) {
+                // Open image gallery for both single and multiple images
+                if (images && productName && category) {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('Opening image gallery for:', productName, 'with images:', images);
                     const imageArray = JSON.parse(images);
                     this.openImageGallery(imageArray, productName, category);
                     return;
-                } else {
-                    console.log('Single image product or missing data - using normal gallery');
                 }
                 
                 // Fallback to old gallery opening logic for shop section
