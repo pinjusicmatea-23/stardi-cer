@@ -663,7 +663,10 @@ class SimpleGallery {
             'bowls': 'bowls', 
             'plates': 'plates',
             'candles': 'candles',
-            'vases': 'vases'
+            'vases': 'vases',
+            'trays': 'trays',
+            'waves': 'waves',
+            'candelsticks': 'candles'
         };
 
         const folder = folderMap[category.toLowerCase()] || 'misc';
