@@ -1787,6 +1787,8 @@ p {
     color: #333;
     text-transform: uppercase;
     text-align: center;
+    position: relative;
+    z-index: 10; /* Keep text on top without visual styling */
 }
 
 /* Adjust letter spacing for Croatian longer words */
@@ -1960,12 +1962,16 @@ html[lang="hr"] .product-title {
     .product-title {
         font-family: 'Cormorant Garamond', serif;
         font-style: italic;
-        font-size: clamp(2.5rem, 9vw, 4rem);
+        font-size: clamp(2.5rem, 9vw, 4rem); /* Restore original mobile size */
         font-weight: 300;
         letter-spacing: 0.3em;
-        line-height: 0.9;
+        line-height: 0.9; /* Keep original line height */
         margin: 0 0 2rem 0;
         text-align: center;
+        position: relative;
+        z-index: 15; /* Higher z-index on mobile but no visual styling */
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: visible; /* Ensure text isn't clipped */
     }
     
     /* Adjust letter spacing for Croatian longer words on smaller screens */
@@ -1985,6 +1991,65 @@ html[lang="hr"] .product-title {
         width: 35px;
         height: 35px;
         font-size: 1.5rem;
+    }
+}
+
+/* Additional mobile styles for accessibility and enlarged fonts */
+@media (max-width: 480px) {
+    .product-title {
+        font-size: clamp(1.8rem, 8vw, 3rem) !important; /* Ensure visible size */
+        z-index: 999 !important; /* Very high priority */
+        white-space: nowrap !important; /* Force single line */
+        overflow: visible !important; /* Don't clip text */
+        position: relative !important;
+        color: #000 !important; /* Strong black color */
+        text-shadow: 0 0 3px rgba(255, 255, 255, 0.8) !important; /* White outline for visibility */
+        font-weight: 400 !important; /* Slightly bolder */
+    }
+    
+    /* Ensure the container doesn't clip the text */
+    .product-info {
+        overflow: visible !important;
+        z-index: 900 !important;
+        position: relative !important;
+        min-height: auto !important;
+    }
+    
+    /* Ensure shop slide container allows text to overflow */
+    .shop-slide {
+        overflow: visible !important;
+        min-height: auto !important;
+    }
+    
+    /* Force shop slide to have proper spacing on very small screens */
+    .shop-slide.active {
+        padding: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* iPhone SE specific fixes */
+@media (max-width: 375px) and (max-height: 667px) {
+    .product-title {
+        font-size: 2rem !important; /* Fixed size for iPhone SE */
+        margin: 1rem 0 !important;
+        z-index: 1000 !important;
+        background: rgba(255, 255, 255, 0.9) !important; /* Light background for contrast */
+        padding: 0.5rem 1rem !important;
+        border-radius: 8px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .shop-slide {
+        height: auto !important;
+        min-height: 100vh !important;
+        max-height: none !important;
+        padding: 2rem 1rem !important;
     }
 }
 
