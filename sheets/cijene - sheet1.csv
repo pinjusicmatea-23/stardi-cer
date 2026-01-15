@@ -1,37 +1,52 @@
 id,name,category,kategorija,material,materijal,size,price,image_file
-1,Pladanj 1a,trays,pladanj,white clay,bijela glina,17x10x1cm,€10.00,stardi_pladanj1a.jpg
-2,Pladanj 1b,trays,pladanj,white clay,bijela glina,17x10x1cm,€10.00,stardi_pladanj1b.jpg
-3,Pladanj 2a,trays,pladanj,white clay ter,bijela glina,18x12x1cm,€20.00,stardi_pladanj2a.jpg
-4,Pladanj 3b,trays,pladanj,white clay,bijela glina,21x14x1cm,€20.00,stardi_pladanj3b.jpg
-5,Pladanj 5a,trays,pladanj,black clay,crna glina,23x17x1cm,€27.00,stardi_pladanj5a.jpg
-6,Pladanj 6a,trays,pladanj,black clay,crna glina,25x20x4cm,€50.00,stardi_pladanj6a.jpg
-7,Pladanj 8a,trays,pladanj,red clay,crvena glina,21x17x6cm,€40.00,stardi_pladanj8a.jpg
-8,Pladanj 9a,trays,pladanj,black clay,crna glina,33x23x7cm,€70.00,stardi_pladanj9a.jpg
-9,Val 3a,waves,val,white clay,bijela glina,23x19x4cm,€35.00,stardi_val3a.jpg
-10,Val 3b,waves,val,white clay ter,bijela glina,23x19x4cm,€40.00,stardi_val3b.jpg
-11,Val 4a,waves,val,white clay,bijela glina,28x19x3cm,€50.00,stardi_val4a.jpg
-12,Val 5a,waves,val,red clay,crvena glina,30x20x3cm,€50.00,stardi_val5a.jpg
-13,Val 6a,waves,val,white caly,bijela glina,30x25x4cm,€60.00,stardi_val6a.jpg
-14,Tanjur 1a,plates,tanjur,red clay,crvena glina,"fi 16cm, h 2cm",€10.00,stardi_tanjur1a.jpg
-15,Tanjur 2a,plates,tanjur,red clay,crvena glina,"fi 14cm, h 1cm",€8.00,stardi_tanjur2a.jpg
-16,Zdjelica 1a,bowls,zdjela,white clay,bijela glina,"fi 17cm, h 6cm",€30.00,stardi_zdjelica1a.jpg
-17,Zdjelica 3a,bowls,zdjela,white clay,bijela glina,"fi 12cm, h 3cm",€10.00,stardi_zdjelica3a.jpg
-18,Zdjelica 4a,bowls,zdjela,black clay,crna glina,"fi 15cm, h 4cm",€30.00,stardi_zdjelica4a.jpg
-19,Zdjelica 5a,bowls,zdjela,white clay,bijela glina,"fi 14cm, h 4cm",€15.00,stardi_zdjelica5a.jpg
-20,Zdjela 1a,bowls,zdjela,black clay,crna glina,24x21x11cm,€55.00,stardi_zdjela1a.jpg
-21,Zdjela 2a,bowls,zdjela,red clay,crvena glina,"fi 18cm, h 5cm",€40.00,stardi_zdjela2a.jpg
-22,Zdjela 2b,bowls,zdjela,white clay,bijela glina,"fi 18cm, h 5cm",€40.00,stardi_zdjela2b.jpg
-23,Zdjela 3a,bowls,zdjela,red clay,crvena glina,"fi 14cm, h 3cm",€35.00,stardi_zdjela3a.jpg
-24,Zdjela 4a,bowls,zdjela,black clay,crna glina,25x19x7,€40.00,stardi_zdjela4a.jpg
-25,Zdjela 5a,bowls,zdjela,white clay,bijela glina,"fi 20cm, h 6cm",€40.00,stardi_zdjela5a.jpg
-26,Zdjela 7a,bowls,zdjela,red clay,crvena glina,22x18x5cm,€45.00,stardi_zdjela7a.jpg
-27,Etažer,bowls,zdjela,white caly,bijela glina,"fi 19cm, h 11cm",€45.00,stardi_etazer.jpg
-28,Šalica 1a ,cups,šalica,white clay,bijela glina,"fi 8cm, h 7cm",€25.00,stardi_salica1a.jpg
-29,Šalica 1b,cups,šalica,red clay,crvena glina,"fi 8cm, h 7cm",€25.00,stardi_salica1b.jpg
-30,Svijećnjak 1a,candelsticks,svijećnjak,white clay,bijela glina,"fi 12cm, h 4cm",€25.00,stardi_svijecnjak1a.jpg
-31,Svijećnjak 1b,candelsticks,svijećnjak,red clay,crvena glina,"fi 12cm, h 4cm",€20.00,stardi_svijecnjak1b.jpg
-32,Svijećnjak 2a,candelsticks,svijećnjak,white clay,bijela glina,12x9x5cm,€25.00,stardi_svijecnjak2a.jpg
-33,Vaza 1a,vases,vaza,white caly,bijela glina,"fi 8cm, h 9cm",€30.00,stardi_vaza1a.jpg
-34,Vaza 2a,vases,vaza,white caly,bijela glina,"fi 7cm, h 10cm",€25.00,stardi_vaza2a.jpg
-35,Vaza 3a,vases,vaza,black caly,crna glina,"fi 7cm, h 10cm",€30.00,stardi_vaza3a.jpg
-36,Vaza 4a,vases,vaza,white caly,bijela glina,10x4x13cm,€20.00,stardi_vaza4a.jpg
+1,Pladanj 1a,tray,pladanj,white clay,bijela glina,17x10x1cm,€10.00,stardi_pladanj1a.jpg
+2,Pladanj 1b,tray,pladanj,white clay,bijela glina,17x10x1cm,€10.00,stardi_pladanj1b.jpg
+3,Pladanj 1c,tray,pladanj,red clay,crvena glina,18x11x1cm,€10.00,stardi_pladanj1c.jpg
+4,Pladanj 2a,tray,pladanj,white clay ter,bijela glina,18x12x1cm,€20.00,stardi_pladanj2a.jpg
+5,Pladanj 3a,tray,pladanj,red clay,crvena glina,19x13x1cm,€20.00,stardi_pladanj3a.jpg
+6,Pladanj 3b,tray,pladanj,white clay,bijela glina,21x14x1cm,€20.00,stardi_pladanj3b.jpg
+7,Pladanj 4a,tray,pladanj,black clay,crna glina,23x12x1cm,€25.00,stardi_pladanj4a.jpg
+8,Pladanj 4c,tray,pladanj,white clay,bijela glina,24x14x1cm,€25.00,stardi_pladanj4c.jpg
+9,Pladanj 5a,tray,pladanj,black clay,crna glina,23x17x1cm,€27.00,stardi_pladanj5a.jpg
+10,Pladanj 6a,tray,pladanj,black clay,crna glina,25x20x4cm,€50.00,stardi_pladanj6a.jpg
+11,Pladanj 7a,tray,pladanj,white clay,bijela glina,27x21x4cm,€40.00,stardi_pladanj7a.jpg
+12,Pladanj 8a,tray,pladanj,red clay,crvena glina,21x17x6cm,€40.00,stardi_pladanj8a.jpg
+13,Pladanj 9a,tray,pladanj,black clay,crna glina,33x23x7cm,€70.00,stardi_pladanj9a.jpg
+14,Val 1a,wave,val,white clay,bijela glina,18x14x3cm,€15.00,stardi_val1a.jpg
+15,Val 1b,wave,val,white clay ter,bijela glina,18x14x3cm,€20.00,stardi_val1b.jpg
+16,Val 2a,wave,val,white clay,bijela glina,24x14x3cm,€25.00,stardi_val2a.jpg
+17,Val 3a,wave,val,white clay,bijela glina,23x19x4cm,€35.00,stardi_val3a.jpg
+18,Val 3b,wave,val,white clay ter,bijela glina,23x19x4cm,€40.00,stardi_val3b.jpg
+19,Val 3c,wave,val,white clay ter,bijela glina,23x19x4cm,€40.00,stardi_val3c.jpg
+20,Val 4a,wave,val,white clay,bijela glina,28x19x3cm,€50.00,stardi_val4a.jpg
+21,Val 5a,wave,val,red clay,crvena glina,30x20x3cm,€50.00,stardi_val5a.jpg
+22,Val 5b,wave,val,white clay ter,bijela glina,30x20x3cm,€50.00,stardi_val5b.jpg
+23,Val 6a,wave,val,white caly,bijela glina,30x25x4cm,€60.00,stardi_val6a.jpg
+24,Tanjur 1a,plate,tanjur,red clay,crvena glina,"fi 16cm, h 2cm",€10.00,stardi_tanjur1a.jpg
+25,Tanjur 2a,plate,tanjur,red clay,crvena glina,"fi 14cm, h 1cm",€8.00,stardi_tanjur2a.jpg
+26,Zdjelica 1a,bowl,zdjela,white clay,bijela glina,"fi 17cm, h 6cm",€30.00,stardi_zdjelica1a.jpg
+27,Zdjelica 2a,bowl,zdjela,white clay,bijela glina,"fi 15cm, h 4cm",€15.00,stardi_zdjelica2a.jpg
+28,Zdjelica 3a,bowl,zdjela,white clay,bijela glina,"fi 12cm, h 3cm",€10.00,stardi_zdjelica3a.jpg
+29,Zdjelica 4a,bowl,zdjela,black clay,crna glina,"fi 15cm, h 4cm",€30.00,stardi_zdjelica4a.jpg
+30,Zdjelica 5a,bowl,zdjela,white clay,bijela glina,"fi 14cm, h 4cm",€15.00,stardi_zdjelica5a.jpg
+31,Zdjela 1a,bowl,zdjela,black clay,crna glina,24x21x11cm,€55.00,stardi_zdjela1a.jpg
+32,Zdjela 2a,bowl,zdjela,red clay,crvena glina,"fi 18cm, h 5cm",€40.00,stardi_zdjela2a.jpg
+33,Zdjela 2b,bowl,zdjela,white clay,bijela glina,"fi 18cm, h 5cm",€40.00,stardi_zdjela2b.jpg
+34,Zdjela 3a,bowl,zdjela,red clay,crvena glina,"fi 14cm, h 3cm",€35.00,stardi_zdjela3a.jpg
+35,Zdjela 4a,bowl,zdjela,black clay,crna glina,25x19x7cm,€40.00,stardi_zdjela4a.jpg
+36,Zdjela 5a,bowl,zdjela,white clay,bijela glina,"fi 20cm, h 6cm",€40.00,stardi_zdjela5a.jpg
+37,Zdjela 6a,bowl,zdjela,red clay,crvena glina,24x22x3cm,€40.00,stardi_zdjela6a.jpg
+38,Zdjela 7a,bowl,zdjela,red clay,crvena glina,22x18x5cm,€45.00,stardi_zdjela7a.jpg
+39,Zdjela 7b,bowl,zdjela,red clay,crvena glina,17x14x6cm,€35.00,stardi_zdjela7b.jpg
+40,Šalica 1a ,cup,šalica,white clay,bijela glina,"fi 8cm, h 7cm",€25.00,stardi_salica1a.jpg
+41,Šalica 1b,cup,šalica,red clay,crvena glina,"fi 8cm, h 7cm",€25.00,stardi_salica1b.jpg
+42,Šalica 2a,cup,šalica,white clay,bijela glina,"fi 8cm, h 7cm",€30.00,stardi_salica2a.jpg
+43,Svijećnjak 1a,candelstick,svijećnjak,white clay,bijela glina,"fi 12cm, h 4cm",€25.00,stardi_svijecnjak1a.jpg
+44,Svijećnjak 1b,candelstick,svijećnjak,red clay,crvena glina,"fi 12cm, h 4cm",€20.00,stardi_svijecnjak1b.jpg
+45,Svijećnjak 2a,candelstick,svijećnjak,white clay,bijela glina,12x9x5cm,€25.00,stardi_svijecnjak2a.jpg
+46,Etažer,bowl,zdjela,white caly,bijela glina,"fi 19cm, h 11cm",€45.00,stardi_etazer.jpg
+47,Vaza 1a,vase,vaza,white caly,bijela glina,"fi 8cm, h 9cm",€30.00,stardi_vaza1a.jpg
+48,Vaza 2a,vase,vaza,white caly,bijela glina,"fi 7cm, h 10cm",€25.00,stardi_vaza2a.jpg
+49,Vaza 3a,vase,vaza,black caly,crna glina,"fi 7cm, h 10cm",€30.00,stardi_vaza3a.jpg
+50,Vaza 4a,vase,vaza,white caly,bijela glina,10x4x13cm,€20.00,stardi_vaza4a.jpg
+, ,,,,,,,
