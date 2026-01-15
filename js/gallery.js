@@ -128,21 +128,10 @@ class CurtainGallery {
         this.currentCategory = category;
         this.isGalleryOpen = true;
         
-        // Map category names
-        const categoryMap = {
-            'cups': 'cups',
-            'plates': 'plates', 
-            'bowls': 'bowls',
-            'waves': 'waves',
-            'candles': 'candle holders'
-        };
-        
-        const csvCategory = categoryMap[category] || category;
-        console.log('Mapped CSV category:', csvCategory);
-        
+        // Filter products by category and in_stock status
         const categoryProducts = this.products.filter(product => 
-            product.category.toLowerCase() === csvCategory.toLowerCase() && 
-            product.in_stock === 'yes'
+            product.category.toLowerCase() === category.toLowerCase() && 
+            (product.in_stock === 'yes' || !product.in_stock) // Allow products without in_stock field
         );
         
         console.log('Found products:', categoryProducts.length, categoryProducts);
@@ -168,18 +157,10 @@ class CurtainGallery {
 
     updateCurtainContent(products = null) {
         if (!products && this.currentCategory) {
-            const categoryMap = {
-                'cups': 'cups',
-                'plates': 'plates', 
-                'bowls': 'bowls',
-                'waves': 'waves',
-                'candles': 'candle holders'
-            };
-            
-            const csvCategory = categoryMap[this.currentCategory] || this.currentCategory;
+            // Filter products by category and in_stock status
             products = this.products.filter(product => 
-                product.category.toLowerCase() === csvCategory.toLowerCase() && 
-                product.in_stock === 'yes'
+                product.category.toLowerCase() === this.currentCategory.toLowerCase() && 
+                (product.in_stock === 'yes' || !product.in_stock) // Allow products without in_stock field
             );
         }
 
@@ -355,7 +336,9 @@ class CurtainGallery {
             'plates': 'plates',
             'bowls': 'bowls', 
             'waves': 'waves',
-            'candle holders': 'candles'
+            'candles': 'candles',
+            'vases': 'vases',
+            'trays': 'trays'
         };
         
         const folder = folderMap[product.category.toLowerCase()] || 'misc';
