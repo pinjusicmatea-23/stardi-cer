@@ -234,12 +234,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize inspirations gallery
     initInspirationGallery();
     
-    // Initialize shop functionality AFTER DOM is ready
-    setTimeout(() => {
-        initShopSlider();
-        initAboutSlider();
-        // Gallery functionality handled by simple-gallery.js
-    }, 100);
+    // Initialize shop functionality
+    initShopSlider();
+    initAboutSlider();
+    // Gallery functionality handled by simple-gallery.js
     
     // Add scroll event listener for header behavior
     let lastScrollY = window.scrollY;

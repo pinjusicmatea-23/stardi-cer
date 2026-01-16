@@ -14,10 +14,14 @@ class SimpleGallery {
 
     async init() {
         console.log('Initializing SimpleGallery...');
-        await this.loadProducts();
-        this.createGalleryHTML();
+        
+        // Bind events immediately so clicking is responsive from the start
         this.bindEvents();
         this.styleClickableTitles();
+        this.createGalleryHTML();
+        
+        // Load products asynchronously without blocking user interaction
+        await this.loadProducts();
     }
 
     async loadProducts() {
@@ -30,8 +34,46 @@ class SimpleGallery {
             await this.detectAdditionalImages();
             
             console.log('Products loaded:', this.products.length);
+            
+            // If a gallery was opened while loading, refresh it now
+            if (this.isGalleryOpen && this.currentCategory) {
+                console.log('Refreshing gallery that was opened during loading...');
+                this.openGallery(this.currentCategory);
+            }
         } catch (error) {
             console.error('Error loading products:', error);
+        }
+    }
+
+    showLoadingMessage(category) {
+        // Show the gallery with a loading message
+        const gallery = document.getElementById('simple-gallery');
+        gallery.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        const categoryNames = {
+            'cups': { en: 'CUPS COLLECTION', hr: 'KOLEKCIJA ŠALICA' },
+            'plates': { en: 'PLATES COLLECTION', hr: 'KOLEKCIJA TANJURIĆA' },
+            'bowls': { en: 'BOWLS COLLECTION', hr: 'KOLEKCIJA ZDJELICA' },
+            'waves': { en: 'WAVES COLLECTION', hr: 'KOLEKCIJA VALOVA' },
+            'candles': { en: 'CANDLES COLLECTION', hr: 'KOLEKCIJA SVIJEĆNJAKA' },
+            'trays': { en: 'TRAYS COLLECTION', hr: 'KOLEKCIJA PLADNJEVA' },
+            'vases': { en: 'VASES COLLECTION', hr: 'KOLEKCIJA VAZA' }
+        };
+
+        // Update title
+        const titleElement = document.querySelector('.gallery-title');
+        const categoryName = categoryNames[category];
+        const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        
+        if (categoryName && titleElement) {
+            titleElement.textContent = currentLanguage === 'en' ? categoryName.en : categoryName.hr;
+        }
+        
+        // Show loading message
+        const gridElement = document.getElementById('gallery-grid');
+        if (gridElement) {
+            gridElement.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 18px; color: #666;">Loading products...</div>';
         }
     }
 
@@ -527,9 +569,16 @@ class SimpleGallery {
         this.currentCategory = category;
         this.isGalleryOpen = true;
         
+        // Check if products are loaded yet
+        if (!this.products || this.products.length === 0) {
+            console.log('Products not loaded yet, showing loading message...');
+            this.showLoadingMessage(category);
+            return;
+        }
+        
         // Map category names
         const categoryMap = {
-            'candles': 'candelsticks'
+            // Remove the incorrect candles mapping
         };
         
         const csvCategory = categoryMap[category] || category;
