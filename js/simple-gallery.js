@@ -29,6 +29,16 @@ class SimpleGallery {
             const response = await fetch('sheets/cijene - sheet1.csv');
             const text = await response.text();
             this.products = this.parseCSV(text);
+
+            // Render products as soon as the CSV is ready. Looking for optional
+            // extra photos can take longer and should not keep the gallery loading.
+            this.products.forEach(product => {
+                product.images = product.image_file ? [product.image_file] : [];
+            });
+
+            if (this.isGalleryOpen && this.currentCategory) {
+                this.openGallery(this.currentCategory);
+            }
             
             // Check for additional images for each product
             await this.detectAdditionalImages();
@@ -42,6 +52,12 @@ class SimpleGallery {
             }
         } catch (error) {
             console.error('Error loading products:', error);
+            if (this.isGalleryOpen) {
+                const gridElement = document.getElementById('gallery-grid');
+                if (gridElement) {
+                    gridElement.innerHTML = `<p class="empty-category-message">${this.currentLanguage === 'en' ? 'Products could not be loaded. Please try again later.' : 'Proizvode nije moguće učitati. Pokušajte ponovno kasnije.'}</p>`;
+                }
+            }
         }
     }
 
@@ -52,6 +68,7 @@ class SimpleGallery {
         document.body.style.overflow = 'hidden';
         
         const categoryNames = {
+            'wedding': { en: 'WEDDING', hr: 'VJENČANJE' },
             'cups': { en: 'CUPS COLLECTION', hr: 'KOLEKCIJA ŠALICA' },
             'plates': { en: 'PLATES COLLECTION', hr: 'KOLEKCIJA TANJURIĆA' },
             'bowls': { en: 'BOWLS COLLECTION', hr: 'KOLEKCIJA ZDJELICA' },
@@ -64,9 +81,11 @@ class SimpleGallery {
         // Update title
         const titleElement = document.querySelector('.gallery-title');
         const categoryName = categoryNames[category];
-        const currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        const currentLanguage = document.documentElement.lang || localStorage.getItem('selectedLanguage') || 'en';
         
         if (categoryName && titleElement) {
+            titleElement.dataset.en = categoryName.en;
+            titleElement.dataset.hr = categoryName.hr;
             titleElement.textContent = currentLanguage === 'en' ? categoryName.en : categoryName.hr;
         }
         
@@ -79,6 +98,7 @@ class SimpleGallery {
 
     async detectAdditionalImages() {
         const folderMap = {
+            'wedding': 'wedding',
             'cups': 'cups',
             'bowls': 'bowls', 
             'plates': 'plates',
@@ -95,29 +115,35 @@ class SimpleGallery {
             const imageExtension = product.image_file.match(/\.[^/.]+$/)?.[0] || '.jpg';
             
             product.images = [product.image_file]; // Start with main image
+            const numberedImageName = baseImageName.match(/^(.*?)(\d+)$/);
             
             // Check for additional images (_2, _3, _4, _5)
             for (let i = 2; i <= 5; i++) {
                 let imageFound = false;
                 
-                // Try both lowercase and uppercase extensions
-                const extensions = [imageExtension, imageExtension.toUpperCase()];
-                
-                for (const ext of extensions) {
-                    const additionalImageName = `${baseImageName}_${i}${ext}`;
-                    const imagePath = `images/shop/${folder}/${additionalImageName}`;
-                    
-                    try {
+                const additionalImageNames = [
+                    `${baseImageName}_${i}`,
+                    numberedImageName ? `${numberedImageName[1]}${i}` : null
+                ].filter(Boolean);
+
+                for (const imageName of additionalImageNames) {
+                    // Try both lowercase and uppercase extensions
+                    const extensions = [...new Set([imageExtension, imageExtension.toUpperCase()])];
+
+                    for (const ext of extensions) {
+                        const additionalImageName = `${imageName}${ext}`;
+                        const imagePath = `images/shop/${folder}/${additionalImageName}`;
+
                         const imageExists = await this.checkImageExists(imagePath);
                         if (imageExists) {
                             product.images.push(additionalImageName);
                             console.log(`Found additional image: ${imagePath}`);
                             imageFound = true;
-                            break; // Found with this extension, stop trying others
+                            break;
                         }
-                    } catch (error) {
-                        continue; // Try next extension
                     }
+
+                    if (imageFound) break;
                 }
                 
                 if (!imageFound) {
@@ -607,11 +633,12 @@ class SimpleGallery {
 
     updateGalleryContent(products) {
         // Get current language each time gallery opens
-        this.currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        this.currentLanguage = document.documentElement.lang || localStorage.getItem('selectedLanguage') || 'en';
         
         // Update title
         const titleElement = document.querySelector('.gallery-title');
         const categoryNames = {
+            'wedding': { en: 'WEDDING', hr: 'VJENČANJE' },
             'cups': { en: 'CUPS COLLECTION', hr: 'KOLEKCIJA ŠALICA' },
             'plates': { en: 'PLATES COLLECTION', hr: 'KOLEKCIJA TANJURIĆA' },
             'bowls': { en: 'BOWLS COLLECTION', hr: 'KOLEKCIJA ZDJELICA' },
@@ -623,6 +650,8 @@ class SimpleGallery {
 
         const categoryName = categoryNames[this.currentCategory];
         if (categoryName && titleElement) {
+            titleElement.dataset.en = categoryName.en;
+            titleElement.dataset.hr = categoryName.hr;
             titleElement.textContent = this.currentLanguage === 'en' ? categoryName.en : categoryName.hr;
         }
 
@@ -634,7 +663,9 @@ class SimpleGallery {
         
         const disclaimerHtml = `<div class="gallery-disclaimer" style="display: none;"></div>`;
         
-        const productsHtml = `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`;
+        const productsHtml = products.length
+            ? `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`
+            : `<p class="empty-category-message">${this.currentLanguage === 'en' ? 'New pieces coming soon.' : 'Uskoro stižu novi komadi.'}</p>`;
         
         grid.innerHTML = productsHtml;
         disclaimerContainer.innerHTML = disclaimerHtml;
@@ -643,8 +674,19 @@ class SimpleGallery {
     createProductCard(product) {
         // Ensure current language is up to date
         this.currentLanguage = localStorage.getItem('selectedLanguage') || 'hr';
+
+        const productNameTranslations = {
+            'vazice': { en: 'Mini Vases', hr: 'Vazice' },
+            'kupolice': { en: 'Bud Vases', hr: 'Kupolice' }
+        };
+        const translatedName = productNameTranslations[product.name.toLowerCase()];
+        const productDisplayName = translatedName
+            ? translatedName[this.currentLanguage]
+            : product.name;
+        const localizedProduct = { ...product, name: productDisplayName };
         
         const folderMap = {
+            'wedding': 'wedding',
             'cups': 'cups',
             'plates': 'plates',
             'bowls': 'bowls', 
@@ -660,18 +702,18 @@ class SimpleGallery {
 
         return `
             <div class="product-card">
-                <div class="product-image" data-images='${JSON.stringify(product.images)}' data-product-name="${product.name}" data-category="${product.category}">
-                    <img src="${imagePath}" alt="${product.name}" loading="lazy">
+                <div class="product-image" data-images='${JSON.stringify(product.images)}' data-product-name="${productDisplayName}" data-category="${product.category}">
+                    <img src="${imagePath}" alt="${productDisplayName}" loading="lazy">
                     ${product.images.length > 1 ? '<div class="image-count-badge">' + product.images.length + '</div>' : ''}
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">${product.name}</h3>
+                    <h3 class="product-name">${productDisplayName}</h3>
                     <div class="product-details">
                         <p><strong>${this.currentLanguage === 'en' ? 'Material:' : 'Materijal:'}</strong> ${this.currentLanguage === 'en' ? product.material : product.materijal}</p>
                         <p><strong>${this.currentLanguage === 'en' ? 'Size:' : 'Veličina:'}</strong> ${product.size}</p>
                         <p class="price"><strong>${this.currentLanguage === 'en' ? 'Price:' : 'Cijena:'}</strong> ${product.price}</p>
                     </div>
-                    <button class="inquire-btn" data-product='${JSON.stringify(product)}'>
+                    <button class="inquire-btn" data-product='${JSON.stringify(localizedProduct)}'>
                         ${this.currentLanguage === 'en' ? 'INQUIRE' : 'UPIT'}
                     </button>
                 </div>
@@ -708,6 +750,7 @@ class SimpleGallery {
         this.isImageGalleryOpen = true;
 
         const folderMap = {
+            'wedding': 'wedding',
             'cups': 'cups',
             'bowls': 'bowls', 
             'plates': 'plates',
