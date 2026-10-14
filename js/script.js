@@ -352,6 +352,28 @@ function initShopSlider() {
     const slides = document.querySelectorAll('.shop-slide');
     const prevBtn = document.querySelector('.slider-prev');
     const nextBtn = document.querySelector('.slider-next');
+    const categoryNav = document.querySelector('.shop-category-nav');
+
+    // Keep shortcuts in sync with the categories in the slider.
+    if (categoryNav) {
+        categoryNav.replaceChildren(...Array.from(slides, (slide, index) => {
+            const title = slide.querySelector('.product-title');
+            const link = document.createElement('button');
+            const english = title?.dataset.en || title?.textContent.trim() || '';
+            const croatian = title?.dataset.hr || english;
+
+            link.type = 'button';
+            link.className = `shop-category-link${index === 0 ? ' active' : ''}`;
+            link.dataset.slideIndex = String(index);
+            link.dataset.en = english;
+            link.dataset.hr = croatian;
+            link.setAttribute('aria-pressed', String(index === 0));
+            link.textContent = document.documentElement.lang === 'hr' ? croatian : english;
+            return link;
+        }));
+    }
+
+    const categoryLinks = categoryNav?.querySelectorAll('.shop-category-link') || [];
     
     console.log('Found slides:', slides.length, 'Prev btn:', !!prevBtn, 'Next btn:', !!nextBtn);
     
@@ -390,6 +412,12 @@ function initShopSlider() {
                 }
             }
         });
+
+        categoryLinks.forEach((link, index) => {
+            const isActive = index === currentSlide;
+            link.classList.toggle('active', isActive);
+            link.setAttribute('aria-pressed', String(isActive));
+        });
         
         // Arrows are always active since we have infinite loop
         if (prevBtn) prevBtn.style.opacity = '1';
@@ -425,6 +453,15 @@ function initShopSlider() {
     // Event listeners
     if (nextBtn) nextBtn.addEventListener('click', nextSlide);
     if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    categoryLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const selectedIndex = Number(link.dataset.slideIndex);
+            if (Number.isInteger(selectedIndex) && selectedIndex >= 0 && selectedIndex < slides.length) {
+                currentSlide = selectedIndex;
+                updateSlider();
+            }
+        });
+    });
     
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
