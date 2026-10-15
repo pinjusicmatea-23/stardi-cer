@@ -1210,7 +1210,7 @@ body.loaded .hero-logo img {
     
     /* Section hero spacing */
     .section-hero {
-        margin-top: -40px !important;
+        margin-top: 0 !important;
         padding-top: 40px !important;
     }
     
@@ -1344,7 +1344,7 @@ body.loaded .hero-logo img {
     
     /* Tighter gallery spacing */
     .gallery-container {
-        margin: 1rem auto 5rem auto !important; /* Much more bottom margin for mobile spacing */
+        margin: 2rem auto 5rem auto !important;
     }
     
     /* Contact section */
