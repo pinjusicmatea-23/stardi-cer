@@ -49,11 +49,11 @@ id,name,category,kategorija,material,materijal,size,price,image_file
 48,Vaza 2a,vases,vaza,white clay,bijela glina,"fi 7cm, h 10cm",€25.00,stardi_vaza2a.jpg
 49,Vaza 3a,vases,vaza,black clay,crna glina,"fi 7cm, h 10cm",€30.00,stardi_vaza3a.jpg
 50,Vaza 4a,vases,vaza,white clay,bijela glina,10x4x13cm,€20.00,stardi_vaza4a.jpg
-51,Vaza 5a,wedding,vjenčanje,white clay,bijela glina,"fi 7cm, h 17cm",€40.00,stardi_vaza5a.jpeg
-52,Vaza 6a,wedding,vjenčanje,white clay,bijela glina,"fi 15cm, h 11cm",€50.00,stardi_vaza6a.jpeg
+57,Kupola - s dnom,wedding,vjenčanje,white clay,bijela glina,"fi 14cm, h 6cm",€50.00,stardi_kupolaS.jpeg
+58,Kupola - bez dna,wedding,vjenčanje,white clay,bijela glina,"fi 15cm, h 5cm",€35.00,stardi_kupolaBez.jpeg
 53,Mini vaza 7a,wedding,vjenčanje,red clay,crvena glina,"fi 4cm, h 8cm",€10.00,stardi_minivaza7a.jpeg
 54,Mini vaza 7b,wedding,vjenčanje,red clay,crvena glina,"fi 8cm, h 4cm",€10.00,stardi_minivaza7b.jpeg
 55,Mini vaza 7c,wedding,vjenčanje,white clay,bijela glina,"fi 4cm, h 8cm",€10.00,stardi_minivaza7c.jpeg
 56,Mini vaza 7d,wedding,vjenčanje,white clay,bijela glina,"fi 8cm, h 4cm",€10.00,stardi_minivaza7d.jpeg
-57,Kupola - s dnom,wedding,vjenčanje,white clay,bijela glina,"fi 14cm, h 6cm",€50.00,stardi_kupolaS.jpeg
-58,Kupola - bez dna,wedding,vjenčanje,white clay,bijela glina,"fi 15cm, h 5cm",€35.00,stardi_kupolaBez.jpeg
+51,Vaza 5a,wedding,vjenčanje,white clay,bijela glina,"fi 7cm, h 17cm",€40.00,stardi_vaza5a.jpeg
+52,Vaza 6a,wedding,vjenčanje,white clay,bijela glina,"fi 15cm, h 11cm",€50.00,stardi_vaza6a.jpeg

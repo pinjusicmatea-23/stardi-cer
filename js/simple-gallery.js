@@ -28,7 +28,7 @@ class SimpleGallery {
     async loadProducts() {
         try {
             const [productsResponse, imagesResponse] = await Promise.all([
-                fetch('sheets/cijene - sheet1.csv?v=20261015c'),
+                fetch('sheets/cijene - sheet1.csv?v=20261016a'),
                 fetch('sheets/product-image-manifest.json?v=20261015c')
             ]);
             if (!productsResponse.ok) throw new Error(`Product sheet request failed (${productsResponse.status})`);
