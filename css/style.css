@@ -1199,6 +1199,14 @@ body.loaded .hero-logo img {
         padding-top: 2rem !important;
         padding-bottom: 2rem !important;
     }
+
+    section + section {
+        margin-top: 1.5rem !important;
+    }
+
+    #about {
+        margin-top: 1.5rem !important;
+    }
     
     /* Section hero spacing */
     .section-hero {
@@ -1227,6 +1235,11 @@ body.loaded .hero-logo img {
         padding: 0 !important;
         height: 45vh !important; /* Very compact for larger mobile screens */
         max-height: 45vh !important;
+        margin-top: 1rem;
+    }
+
+    .shop-category-nav {
+        margin-block: 1rem;
     }
     
     .shop-slider-container, .about-slider-container {
@@ -1315,8 +1328,8 @@ body.loaded .hero-logo img {
     
     /* Tighter section spacing */
     section {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
     }
     
     /* Reduce philosophy card spacing */
