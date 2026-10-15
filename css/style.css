@@ -443,6 +443,27 @@ p {
     height: auto;
 }
 
+body.loaded .hero-logo img {
+    animation: hero-logo-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hero-logo-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.loaded .hero-logo img {
+        animation: none;
+    }
+}
+
 .hero-subtitle p {
     font-size: 1.2rem;
     letter-spacing: 0.6em;
@@ -1344,6 +1365,7 @@ p {
 .main-item img {
     width: 100%;
     height: 100%;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
@@ -1433,6 +1455,7 @@ p {
 .grid-item img {
     width: 100%;
     height: 100%;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
@@ -2909,6 +2932,7 @@ html[lang="hr"] .product-title {
 .in-use-item img {
     width: 100%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
@@ -3807,6 +3831,7 @@ button:focus {
 
 /* Simple Gallery Styles */
 .simple-gallery {
+    --gallery-inline-padding: 60px;
     position: fixed;
     top: 0;
     left: 0;
@@ -3831,7 +3856,7 @@ button:focus {
     display: none;
 }
 
-.simple-gallery .gallery-container {
+.simple-gallery .simple-gallery-container {
     position: relative;
     width: 100%;
     height: 100%;
@@ -3844,7 +3869,7 @@ button:focus {
 }
 
 .simple-gallery .gallery-header {
-    padding: 25px 60px 25px 60px;
+    padding: 25px var(--gallery-inline-padding);
     background: white;
     color: #2c2c2c;
     display: flex;
@@ -3880,6 +3905,8 @@ button:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Align the visible × with the header's right inset while retaining a 50px tap target. */
+    transform: translateX(11px);
     transition: color 0.3s ease;
 }
 
@@ -3890,7 +3917,7 @@ button:focus {
 .simple-gallery .gallery-content {
     flex: 1;
     overflow: hidden;
-    padding: 40px 60px;
+    padding: 40px var(--gallery-inline-padding);
 }
 
 .simple-gallery .gallery-scroll {
@@ -3905,7 +3932,7 @@ button:focus {
     gap: 30px;
     height: 100%;
     align-items: flex-start;
-    padding-bottom: 20px;
+    padding-bottom: 0;
 }
 
 .simple-gallery .products-row {
@@ -3946,6 +3973,12 @@ button:focus {
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
+}
+
+.simple-gallery .product-card .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f1eee8;
 }
 
 .simple-gallery .product-card:hover .product-image img {
@@ -4020,38 +4053,16 @@ button:focus {
     transform: translateY(0);
 }
 
-/* Gallery Disclaimer Container */
-.gallery-disclaimer-container {
-    position: relative;
-    padding: 20px 60px;
-    background: transparent;
-    display: flex;
-    justify-content: flex-start;
-}
-
-/* Gallery Disclaimer */
-.gallery-disclaimer {
-    width: 630px;
-    padding: 20px;
-    font-size: 14px;
-    color: #666;
-    text-align: left;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    line-height: 1.6;
-    font-style: italic;
-    margin: 0;
-}
-
 /* Mobile Responsive Styles for Simple Gallery */
 @media (max-width: 768px) {
     .simple-gallery {
+        --gallery-inline-padding: 30px;
         height: 100vh; /* Make sure it uses full height */
     }
     
-    .simple-gallery .gallery-container {
-        height: 95vh; /* Increase from default to give more space */
-        max-height: 95vh;
+    .simple-gallery .simple-gallery-container {
+        height: 100vh;
+        max-height: 100vh;
     }
     
     .simple-gallery .gallery-content {
@@ -4063,17 +4074,18 @@ button:focus {
     }
     
     .simple-gallery .gallery-grid {
-        gap: 20px;
+        gap: 12px;
         padding-left: 0; /* No padding */
         margin-left: 0; /* No margin - allow cards to scroll to very edge */
-        padding-top: 20px; /* Only top padding for spacing from header */
+        padding-top: 12px;
+        padding-bottom: 0;
     }
     
     .simple-gallery .products-row {
         display: flex;
         flex-direction: row; /* Keep horizontal scrolling */
         gap: 20px;
-        padding-left: 30px; /* Initial alignment with title */
+        padding-left: var(--gallery-inline-padding);
     }
     
     .simple-gallery .product-card {
@@ -4082,17 +4094,6 @@ button:focus {
         min-height: auto;
     }
     
-    .gallery-disclaimer-container {
-        padding: 0 20px 10px 20px; /* Removed top padding, minimal bottom padding */
-    }
-    
-    .gallery-disclaimer {
-        width: 100%;
-        max-width: none;
-        padding: 5px; /* Reduced from 10px to 5px */
-        font-size: 10px; /* Smaller font for mobile */
-        line-height: 1.4; /* Tighter line height */
-    }
 }
 
 /* Image Gallery Modal Styles - Simple Style */
@@ -4452,7 +4453,7 @@ button:focus {
 /* Mobile responsive */
 @media (max-width: 768px) {
     .simple-gallery .gallery-header {
-        padding: 20px 30px;
+        padding: 20px var(--gallery-inline-padding);
     }
     
     .simple-gallery .gallery-title {
@@ -4460,7 +4461,7 @@ button:focus {
     }
     
     .simple-gallery .gallery-content {
-        padding: 10px 30px; /* Reduced top padding from 20px to 10px */
+        padding: 0;
     }
     
     .simple-gallery .product-card {
@@ -4644,5 +4645,138 @@ button:focus {
         bottom: 10px;
         padding: 6px 12px;
         font-size: 0.75rem;
+    }
+}
+
+/* Keep mobile layouts steady while browser address bars expand or collapse. */
+@supports (height: 100svh) {
+    @media (max-width: 768px) {
+        .hero {
+            min-height: 100svh;
+        }
+
+        .nav-overlay {
+            height: 100svh;
+        }
+
+        .section-hero,
+        .video-hero {
+            height: 100svh;
+        }
+
+        .video-hero {
+            min-height: 100svh;
+        }
+
+        .video-background {
+            height: 72svh;
+        }
+
+        .video-background video {
+            width: 72svh;
+            min-width: 72svh;
+        }
+
+        .shop,
+        .shop-slider-container,
+        .shop-slider,
+        .shop-slide,
+        .about,
+        .about-slider-container,
+        .about-slider,
+        .about-slide {
+            height: 45svh !important;
+            max-height: 45svh !important;
+        }
+
+        .shop-slide,
+        .about-slide {
+            min-height: 45svh !important;
+        }
+
+        .simple-gallery {
+            height: 100svh;
+        }
+
+        .simple-gallery .simple-gallery-container {
+            height: 100svh;
+            max-height: 100svh;
+        }
+
+        .simple-gallery .product-card,
+        .product-item {
+            max-height: calc(100svh - 200px);
+        }
+
+        .modal-content,
+        .modal-media img,
+        .modal-media video,
+        .main-gallery-image {
+            max-height: 90svh;
+        }
+
+        .email-modal-content {
+            max-height: 80svh;
+        }
+
+        .inquiry-modal-content {
+            max-height: 85svh;
+        }
+
+        .shop-slide.active,
+        .about-slide[data-index="0"] {
+            gap: clamp(1rem, 3svh, 1.5rem);
+        }
+
+        .shop-slide .product-image,
+        .about-slide[data-index="0"] .about-image {
+            --preview-image-size: min(240px, calc(45svh - 90px));
+            width: var(--preview-image-size) !important;
+            height: var(--preview-image-size) !important;
+            aspect-ratio: 1 / 1;
+            flex: 0 0 auto !important;
+            margin: 0 !important;
+        }
+
+        .shop-slide .product-info {
+            margin: 0 auto;
+            flex: 0 0 auto;
+        }
+
+        .shop-slide .product-title {
+            margin: 0 !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .video-hero {
+            min-height: 60svh !important;
+        }
+
+        .video-background {
+            height: 35svh !important;
+        }
+
+        .shop-slide .product-image,
+        .about-slide[data-index="0"] .about-image {
+            --preview-image-size: min(220px, calc(40svh - 90px));
+        }
+
+        .shop,
+        .shop-slider-container,
+        .shop-slider,
+        .shop-slide,
+        .about,
+        .about-slider-container,
+        .about-slider,
+        .about-slide {
+            height: 40svh !important;
+            max-height: 40svh !important;
+        }
+
+        .shop-slide,
+        .about-slide {
+            min-height: 40svh !important;
+        }
     }
 }
