@@ -4743,7 +4743,7 @@ button:focus {
 
         .shop-slide .product-image,
         .about-slide[data-index="0"] .about-image {
-            --preview-image-size: min(240px, calc(45svh - 90px));
+            --preview-image-size: min(240px, calc(100vw - 100px));
             width: var(--preview-image-size) !important;
             height: var(--preview-image-size) !important;
             aspect-ratio: 1 / 1;
@@ -4763,6 +4763,7 @@ button:focus {
 
     @media (max-width: 480px) {
         .video-hero {
+            height: 60svh !important;
             min-height: 60svh !important;
         }
 
@@ -4772,7 +4773,7 @@ button:focus {
 
         .shop-slide .product-image,
         .about-slide[data-index="0"] .about-image {
-            --preview-image-size: min(220px, calc(40svh - 90px));
+            --preview-image-size: min(220px, calc(100vw - 100px));
         }
 
         .shop,
