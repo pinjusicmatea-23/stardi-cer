@@ -112,9 +112,24 @@ class SimpleGallery {
         for (const product of this.products) {
             const folder = folderMap[product.category.toLowerCase()] || 'misc';
             const baseImageName = product.image_file.replace(/\.[^/.]+$/, ""); // Remove extension
-            const imageExtension = product.image_file.match(/\.[^/.]+$/)?.[0] || '.jpg';
-            
-            product.images = [product.image_file]; // Start with main image
+            const imageExtensions = ['.jpg', '.jpeg', '.JPG', '.JPEG'];
+            const mainImageExtensions = [
+                product.image_file.match(/\.[^/.]+$/)?.[0],
+                ...imageExtensions
+            ].filter((extension, index, extensions) => extension && extensions.indexOf(extension) === index);
+
+            // The sheet can use .jpg while the uploaded photo is .jpeg (or vice versa).
+            // Resolve the real file once so both the card and its image gallery use it.
+            let mainImage = product.image_file;
+            for (const extension of mainImageExtensions) {
+                const candidate = `${baseImageName}${extension}`;
+                if (await this.checkImageExists(`images/shop/${folder}/${candidate}`)) {
+                    mainImage = candidate;
+                    break;
+                }
+            }
+            product.image_file = mainImage;
+            product.images = [mainImage];
             const numberedImageName = baseImageName.match(/^(.*?)(\d+)$/);
             
             // Check for additional images (_2, _3, _4, _5)
@@ -127,10 +142,7 @@ class SimpleGallery {
                 ].filter(Boolean);
 
                 for (const imageName of additionalImageNames) {
-                    // Try both lowercase and uppercase extensions
-                    const extensions = [...new Set([imageExtension, imageExtension.toUpperCase()])];
-
-                    for (const ext of extensions) {
+                    for (const ext of imageExtensions) {
                         const additionalImageName = `${imageName}${ext}`;
                         const imagePath = `images/shop/${folder}/${additionalImageName}`;
 
@@ -677,7 +689,15 @@ class SimpleGallery {
 
         const productNameTranslations = {
             'vazice': { en: 'Mini Vases', hr: 'Vazice' },
-            'kupolice': { en: 'Bud Vases', hr: 'Kupolice' }
+            'kupolice': { en: 'Bud Vases', hr: 'Kupolice' },
+            'vaza 5a': { en: 'Vase 5a', hr: 'Vaza 5a' },
+            'vaza 6a': { en: 'Vase 6a', hr: 'Vaza 6a' },
+            'mini vaza 7a': { en: 'Mini Vase 7a', hr: 'Mini vaza 7a' },
+            'mini vaza 7b': { en: 'Mini Vase 7b', hr: 'Mini vaza 7b' },
+            'mini vaza 7c': { en: 'Mini Vase 7c', hr: 'Mini vaza 7c' },
+            'mini vaza 7d': { en: 'Mini Vase 7d', hr: 'Mini vaza 7d' },
+            'kupola - s dnom': { en: 'Dome with Base', hr: 'Kupola - s dnom' },
+            'kupola - bez dna': { en: 'Dome without Base', hr: 'Kupola - bez dna' }
         };
         const translatedName = productNameTranslations[product.name.toLowerCase()];
         const productDisplayName = translatedName
