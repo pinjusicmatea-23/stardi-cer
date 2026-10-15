@@ -352,6 +352,28 @@ function initShopSlider() {
     const slides = document.querySelectorAll('.shop-slide');
     const prevBtn = document.querySelector('.slider-prev');
     const nextBtn = document.querySelector('.slider-next');
+    const categoryNav = document.querySelector('.shop-category-nav');
+
+    // Keep shortcuts in sync with the categories in the slider.
+    if (categoryNav) {
+        categoryNav.replaceChildren(...Array.from(slides, (slide, index) => {
+            const title = slide.querySelector('.product-title');
+            const link = document.createElement('button');
+            const english = title?.dataset.en || title?.textContent.trim() || '';
+            const croatian = title?.dataset.hr || english;
+
+            link.type = 'button';
+            link.className = `shop-category-link${index === 0 ? ' active' : ''}`;
+            link.dataset.slideIndex = String(index);
+            link.dataset.en = english;
+            link.dataset.hr = croatian;
+            link.setAttribute('aria-pressed', String(index === 0));
+            link.textContent = document.documentElement.lang === 'hr' ? croatian : english;
+            return link;
+        }));
+    }
+
+    const categoryLinks = categoryNav?.querySelectorAll('.shop-category-link') || [];
     
     console.log('Found slides:', slides.length, 'Prev btn:', !!prevBtn, 'Next btn:', !!nextBtn);
     
@@ -390,6 +412,12 @@ function initShopSlider() {
                 }
             }
         });
+
+        categoryLinks.forEach((link, index) => {
+            const isActive = index === currentSlide;
+            link.classList.toggle('active', isActive);
+            link.setAttribute('aria-pressed', String(isActive));
+        });
         
         // Arrows are always active since we have infinite loop
         if (prevBtn) prevBtn.style.opacity = '1';
@@ -425,6 +453,15 @@ function initShopSlider() {
     // Event listeners
     if (nextBtn) nextBtn.addEventListener('click', nextSlide);
     if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    categoryLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const selectedIndex = Number(link.dataset.slideIndex);
+            if (Number.isInteger(selectedIndex) && selectedIndex >= 0 && selectedIndex < slides.length) {
+                currentSlide = selectedIndex;
+                updateSlider();
+            }
+        });
+    });
     
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
@@ -600,22 +637,13 @@ function initInspirationGallery() {
     
     if (!modal || !modalImage || !modalClose) return;
 
-    // All inspiration images - starting with the HTML order, then adding the rest
+    // Keep this list as the single source for the visible gallery and slideshow.
     const allImages = [
-        // First 12 match the HTML layout order (indices 0-11)
-        'IMG_7874.JPG',   // index 0 - main featured image
-        'IMG_7780.JPG',   // index 1
-        'IMG_7794e.jpg',  // index 2  
-        'IMG_7799e.jpg',  // index 3
-        'IMG_7804.JPG',   // index 4
-        'IMG_7845.JPG',   // index 5
-        'IMG_7850.JPG',   // index 6
-        'IMG_7818.JPG',   // index 7
-        'IMG_7820.JPG',   // index 8
-        'IMG_7822.JPG',   // index 9
-        'IMG_7825.JPG',   // index 10
-        'IMG_7828.JPG',   // index 11
-        // Additional images (indices 12+)
+        // The first image is featured; the next 11 appear in the thumbnail grid.
+        'IMG_7874.JPG', 'IMG_7780.JPG', 'IMG_7794e.jpg', 'IMG_7799e.jpg',
+        'IMG_7804.JPG', 'IMG_7845.JPG', 'IMG_7850.JPG', 'IMG_7818.JPG',
+        'IMG_7820.JPG', 'IMG_7822.JPG', 'IMG_7825.JPG', 'IMG_7828.JPG',
+        // Remaining images are available through slideshow navigation.
         'IMG_7833.JPG', 'IMG_7835.JPG', 'IMG_7855.JPG', 'IMG_7859.JPG', 'IMG_7860e.jpg',
         'IMG_7866.JPG', 'IMG_7870.JPG', 'IMG_7876e.jpg', 'IMG_7887.JPG', 'IMG_7889.JPG',
         'IMG_7902.JPG', 'IMG_7909.JPG', 'IMG_7911.JPG', 'IMG_7912.JPG', 'IMG_7929.JPG',
@@ -623,8 +651,22 @@ function initInspirationGallery() {
         'IMG_7958e.jpg', 'IMG_7959e.jpg', 'IMG_7963e.jpg', 'IMG_7966.JPG', 'IMG_7970e.jpg',
         'IMG_7975.JPG', 'IMG_7979.JPG', 'IMG_7980.JPG', 'IMG_7993.JPG'
     ];
-    
-    // Now get the existing gallery items (12 hardcoded ones)
+
+    const galleryMain = inspirationsSection.querySelector('.gallery-main');
+    const galleryGrid = inspirationsSection.querySelector('.gallery-grid');
+    if (!galleryMain || !galleryGrid || !allImages.length) return;
+
+    const createGalleryItem = (imageName, index, className) => `
+        <div class="${className} gallery-item" data-index="${index}">
+            <img src="images/inspirations/${imageName}" alt="Ceramic inspiration" loading="lazy">
+        </div>`;
+
+    galleryMain.innerHTML = createGalleryItem(allImages[0], 0, 'main-item');
+    galleryGrid.innerHTML = allImages
+        .slice(1, 12)
+        .map((imageName, index) => createGalleryItem(imageName, index + 1, 'grid-item'))
+        .join('');
+
     const galleryItems = inspirationsSection.querySelectorAll('.gallery-item');
     if (!galleryItems.length) return;
     
