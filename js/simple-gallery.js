@@ -9,6 +9,7 @@ class SimpleGallery {
         this.currentImages = [];
         this.currentImageIndex = 0;
         this.currentImageFolder = '';
+        this.productImageManifest = {};
         this.init();
     }
 
@@ -26,30 +27,26 @@ class SimpleGallery {
 
     async loadProducts() {
         try {
-            const response = await fetch('sheets/cijene - sheet1.csv');
-            const text = await response.text();
-            this.products = this.parseCSV(text);
+            const [productsResponse, imagesResponse] = await Promise.all([
+                fetch('sheets/cijene - sheet1.csv?v=20261015c'),
+                fetch('sheets/product-image-manifest.json?v=20261015c')
+            ]);
+            if (!productsResponse.ok) throw new Error(`Product sheet request failed (${productsResponse.status})`);
+            if (!imagesResponse.ok) throw new Error(`Product image manifest request failed (${imagesResponse.status})`);
 
-            // Render products as soon as the CSV is ready. Looking for optional
-            // extra photos can take longer and should not keep the gallery loading.
-            this.products.forEach(product => {
-                product.images = product.image_file ? [product.image_file] : [];
-            });
+            const [text, imageManifest] = await Promise.all([
+                productsResponse.text(),
+                imagesResponse.json()
+            ]);
+            this.productImageManifest = imageManifest;
+            this.products = this.parseCSV(text);
+            this.resolveProductImages();
 
             if (this.isGalleryOpen && this.currentCategory) {
                 this.openGallery(this.currentCategory);
             }
-            
-            // Check for additional images for each product
-            await this.detectAdditionalImages();
             
             console.log('Products loaded:', this.products.length);
-            
-            // If a gallery was opened while loading, refresh it now
-            if (this.isGalleryOpen && this.currentCategory) {
-                console.log('Refreshing gallery that was opened during loading...');
-                this.openGallery(this.currentCategory);
-            }
         } catch (error) {
             console.error('Error loading products:', error);
             if (this.isGalleryOpen) {
@@ -59,6 +56,55 @@ class SimpleGallery {
                 }
             }
         }
+    }
+
+    resolveProductImages() {
+        const folderMap = {
+            'wedding': 'wedding',
+            'cups': 'cups',
+            'bowls': 'bowls',
+            'plates': 'plates',
+            'candles': 'candles',
+            'vases': 'vases',
+            'trays': 'trays',
+            'waves': 'waves',
+            'candelsticks': 'candles'
+        };
+        const getStem = filename => filename.replace(/\.[^/.]+$/, '');
+
+        const findByStem = (files, stem) => files.find(filename =>
+            getStem(filename).toLowerCase() === stem.toLowerCase()
+        );
+
+        this.products.forEach(product => {
+            const folder = folderMap[product.category.toLowerCase()] || 'misc';
+            const availableFiles = this.productImageManifest[folder] || [];
+            const requestedImage = product.image_file || '';
+            const requestedStem = getStem(requestedImage);
+            const mainImage = availableFiles.includes(requestedImage)
+                ? requestedImage
+                : findByStem(availableFiles, requestedStem);
+
+            product.image_file = mainImage || '';
+            product.images = mainImage ? [mainImage] : [];
+
+            if (!mainImage) return;
+
+            const baseImageName = getStem(mainImage);
+            const numberedImageName = baseImageName.match(/^(.*?)(\d+)$/);
+            for (let index = 2; index <= 5; index++) {
+                const candidates = [
+                    `${baseImageName}_${index}`,
+                    numberedImageName ? `${numberedImageName[1]}${index}` : null
+                ].filter(Boolean);
+                const additionalImage = candidates
+                    .map(candidate => findByStem(availableFiles, candidate))
+                    .find(Boolean);
+
+                if (!additionalImage) break;
+                product.images.push(additionalImage);
+            }
+        });
     }
 
     showLoadingMessage(category) {
@@ -94,88 +140,6 @@ class SimpleGallery {
         if (gridElement) {
             gridElement.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 18px; color: #666;">Loading products...</div>';
         }
-    }
-
-    async detectAdditionalImages() {
-        const folderMap = {
-            'wedding': 'wedding',
-            'cups': 'cups',
-            'bowls': 'bowls', 
-            'plates': 'plates',
-            'candles': 'candles',
-            'vases': 'vases',
-            'trays': 'trays',
-            'waves': 'waves',
-            'candelsticks': 'candles'
-        };
-
-        for (const product of this.products) {
-            const folder = folderMap[product.category.toLowerCase()] || 'misc';
-            const baseImageName = product.image_file.replace(/\.[^/.]+$/, ""); // Remove extension
-            const imageExtensions = ['.jpg', '.jpeg', '.JPG', '.JPEG'];
-            const mainImageExtensions = [
-                product.image_file.match(/\.[^/.]+$/)?.[0],
-                ...imageExtensions
-            ].filter((extension, index, extensions) => extension && extensions.indexOf(extension) === index);
-
-            // The sheet can use .jpg while the uploaded photo is .jpeg (or vice versa).
-            // Resolve the real file once so both the card and its image gallery use it.
-            let mainImage = product.image_file;
-            for (const extension of mainImageExtensions) {
-                const candidate = `${baseImageName}${extension}`;
-                if (await this.checkImageExists(`images/shop/${folder}/${candidate}`)) {
-                    mainImage = candidate;
-                    break;
-                }
-            }
-            product.image_file = mainImage;
-            product.images = [mainImage];
-            const numberedImageName = baseImageName.match(/^(.*?)(\d+)$/);
-            
-            // Check for additional images (_2, _3, _4, _5)
-            for (let i = 2; i <= 5; i++) {
-                let imageFound = false;
-                
-                const additionalImageNames = [
-                    `${baseImageName}_${i}`,
-                    numberedImageName ? `${numberedImageName[1]}${i}` : null
-                ].filter(Boolean);
-
-                for (const imageName of additionalImageNames) {
-                    for (const ext of imageExtensions) {
-                        const additionalImageName = `${imageName}${ext}`;
-                        const imagePath = `images/shop/${folder}/${additionalImageName}`;
-
-                        const imageExists = await this.checkImageExists(imagePath);
-                        if (imageExists) {
-                            product.images.push(additionalImageName);
-                            console.log(`Found additional image: ${imagePath}`);
-                            imageFound = true;
-                            break;
-                        }
-                    }
-
-                    if (imageFound) break;
-                }
-                
-                if (!imageFound) {
-                    break; // Stop checking if no image found for this number
-                }
-            }
-            
-            if (product.images.length > 1) {
-                console.log(`Product ${product.name} has ${product.images.length} images:`, product.images);
-            }
-        }
-    }
-
-    checkImageExists(imagePath) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = imagePath;
-        });
     }
 
     parseCSV(text) {
@@ -221,7 +185,7 @@ class SimpleGallery {
         const galleryHTML = `
             <div id="simple-gallery" class="simple-gallery">
                 <div class="gallery-overlay"></div>
-                <div class="gallery-container">
+                <div class="simple-gallery-container">
                     <div class="gallery-header">
                         <h1 class="gallery-title"></h1>
                         <button class="gallery-close">&times;</button>
@@ -232,9 +196,6 @@ class SimpleGallery {
                                 <!-- Products will be inserted here -->
                             </div>
                         </div>
-                    </div>
-                    <div class="gallery-disclaimer-container" id="gallery-disclaimer-container">
-                        <!-- Disclaimer text will be inserted here -->
                     </div>
                 </div>
             </div>
@@ -249,12 +210,12 @@ class SimpleGallery {
                     </div>
                     <form id="email-form" class="email-form">
                         <div class="form-group">
-                            <label class="email-label">Your email:</label>
-                            <input type="email" name="email" required>
+                            <label class="email-label" for="email-address">Your email:</label>
+                            <input id="email-address" type="email" name="email" autocomplete="email" required>
                         </div>
                         <div class="form-group">
-                            <label class="message-label">Message:</label>
-                            <textarea name="message" required rows="4" placeholder="Enter your message here..."></textarea>
+                            <label class="message-label" for="email-message">Message:</label>
+                            <textarea id="email-message" name="message" required rows="4" placeholder="Enter your message here..."></textarea>
                         </div>
                         <div class="form-buttons">
                             <button type="button" class="send-btn">Send</button>
@@ -670,17 +631,11 @@ class SimpleGallery {
         // Update grid
         const grid = document.getElementById('gallery-grid');
         
-        // Disclaimer text removed from gallery - moved to contact section
-        const disclaimerContainer = document.getElementById('gallery-disclaimer-container');
-        
-        const disclaimerHtml = `<div class="gallery-disclaimer" style="display: none;"></div>`;
-        
         const productsHtml = products.length
             ? `<div class="products-row">${products.map(product => this.createProductCard(product)).join('')}</div>`
             : `<p class="empty-category-message">${this.currentLanguage === 'en' ? 'New pieces coming soon.' : 'Uskoro stižu novi komadi.'}</p>`;
         
         grid.innerHTML = productsHtml;
-        disclaimerContainer.innerHTML = disclaimerHtml;
     }
 
     createProductCard(product) {
@@ -718,12 +673,20 @@ class SimpleGallery {
         };
         
         const folder = folderMap[product.category.toLowerCase()] || 'misc';
-        const imagePath = `images/shop/${folder}/${product.image_file}`;
+        const imagePath = product.image_file
+            ? `images/shop/${folder}/${product.image_file}`
+            : '';
+        const imageAttributes = product.images.length
+            ? `data-images='${JSON.stringify(product.images)}'`
+            : '';
+        const imageMarkup = imagePath
+            ? `<img src="${imagePath}" alt="${productDisplayName}" width="600" height="400" loading="lazy">`
+            : '<div class="product-image-placeholder" aria-hidden="true"></div>';
 
         return `
             <div class="product-card">
-                <div class="product-image" data-images='${JSON.stringify(product.images)}' data-product-name="${productDisplayName}" data-category="${product.category}">
-                    <img src="${imagePath}" alt="${productDisplayName}" loading="lazy">
+                <div class="product-image" ${imageAttributes} data-product-name="${productDisplayName}" data-category="${product.category}">
+                    ${imageMarkup}
                     ${product.images.length > 1 ? '<div class="image-count-badge">' + product.images.length + '</div>' : ''}
                 </div>
                 <div class="product-info">

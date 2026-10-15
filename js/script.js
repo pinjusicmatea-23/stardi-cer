@@ -658,7 +658,7 @@ function initInspirationGallery() {
 
     const createGalleryItem = (imageName, index, className) => `
         <div class="${className} gallery-item" data-index="${index}">
-            <img src="images/inspirations/${imageName}" alt="Ceramic inspiration" loading="lazy">
+            <img src="images/inspirations/${imageName}" alt="Ceramic inspiration" width="1200" height="800" loading="lazy">
         </div>`;
 
     galleryMain.innerHTML = createGalleryItem(allImages[0], 0, 'main-item');

@@ -387,16 +387,16 @@ class CurtainGallery {
                             </h4>
                             <form class="product-inquiry-form" data-product-name="${product.name}" data-product-id="${product.id}">
                                 <div class="form-group">
-                                    <label>
+                                    <label for="product-email-${product.id}">
                                         ${this.currentLanguage === 'en' ? 'Your Email' : 'Vaš Email'}
                                     </label>
-                                    <input type="email" name="email" required placeholder="${this.currentLanguage === 'en' ? 'your.email@example.com' : 'vas.email@primjer.com'}">
+                                    <input id="product-email-${product.id}" type="email" name="email" autocomplete="email" required placeholder="${this.currentLanguage === 'en' ? 'your.email@example.com' : 'vas.email@primjer.com'}">
                                 </div>
                                 <div class="form-group">
-                                    <label>
+                                    <label for="product-message-${product.id}">
                                         ${this.currentLanguage === 'en' ? 'Message' : 'Poruka'}
                                     </label>
-                                    <textarea name="message" required placeholder="${this.currentLanguage === 'en' ? 'I am interested in this product...' : 'Zanima me ovaj proizvod...'}" rows="3"></textarea>
+                                    <textarea id="product-message-${product.id}" name="message" required placeholder="${this.currentLanguage === 'en' ? 'I am interested in this product...' : 'Zanima me ovaj proizvod...'}" rows="3"></textarea>
                                 </div>
                                 <div class="form-buttons">
                                     <button type="submit" class="send-btn">
