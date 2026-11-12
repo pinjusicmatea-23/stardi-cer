@@ -36,6 +36,22 @@ stardi/
 - Contact section
 - Clean, professional appearance
 
+## Machine-readable price list
+
+The current price list is published at `/pricelist-latest.csv`, with dated copies and
+a browsable archive at `/pricelists/`. The daily GitHub Actions workflow rebuilds
+these files from `sheets/cijene - sheet1.csv`, retains archive files for at least
+30 days, and commits the results to `main`.
+
+Archive filenames include the sales method (`prodaja-po-narudzbi`), outlet address,
+outlet identifier (`STARDI-01`), storage number (`01`), and a UTC date/time
+timestamp. The fixed `pricelist-latest.csv` URL remains the shortcut to the current
+file.
+
+The source CSV's `anchor_price_eur` column stores each product's price on
+10 September 2026. It is set to the current price because prices have not changed
+since then; preserve this value when changing a product's current `price`.
+
 ## Customization Tips
 
 ### Colors

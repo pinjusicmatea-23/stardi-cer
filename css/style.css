@@ -3022,6 +3022,16 @@ html[lang="hr"] .product-title {
     border-top: 1px solid #e0e0e0;
 }
 
+.price-list-download {
+    color: #2c2c2c;
+    font-size: 14px;
+    text-underline-offset: 4px;
+}
+
+.price-list-download:hover {
+    color: #666;
+}
+
 .footer-nav {
     display: flex;
     justify-content: center;

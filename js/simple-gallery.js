@@ -28,7 +28,7 @@ class SimpleGallery {
     async loadProducts() {
         try {
             const [productsResponse, imagesResponse] = await Promise.all([
-                fetch('sheets/cijene - sheet1.csv?v=20261016a'),
+                fetch('sheets/cijene - sheet1.csv?v=20261112a'),
                 fetch('sheets/product-image-manifest.json?v=20261015c')
             ]);
             if (!productsResponse.ok) throw new Error(`Product sheet request failed (${productsResponse.status})`);
@@ -641,6 +641,14 @@ class SimpleGallery {
     createProductCard(product) {
         // Ensure current language is up to date
         this.currentLanguage = localStorage.getItem('selectedLanguage') || 'hr';
+        const formatEuroPrice = value => {
+            if (value === undefined || value === null || String(value).trim() === '') {
+                return this.currentLanguage === 'en' ? 'Unavailable' : 'Nije dostupno';
+            }
+            const normalized = String(value).replace(/[^\d,.-]/g, '').replace(',', '.');
+            const amount = Number(normalized);
+            return Number.isFinite(amount) ? `€${amount.toFixed(2)}` : value;
+        };
 
         const productNameTranslations = {
             'vazice': { en: 'Mini Vases', hr: 'Vazice' },
@@ -694,7 +702,8 @@ class SimpleGallery {
                     <div class="product-details">
                         <p><strong>${this.currentLanguage === 'en' ? 'Material:' : 'Materijal:'}</strong> ${this.currentLanguage === 'en' ? product.material : product.materijal}</p>
                         <p><strong>${this.currentLanguage === 'en' ? 'Size:' : 'Veličina:'}</strong> ${product.size}</p>
-                        <p class="price"><strong>${this.currentLanguage === 'en' ? 'Price:' : 'Cijena:'}</strong> ${product.price}</p>
+                        <p class="price"><strong><span data-en="Current price:" data-hr="Trenutna cijena:">${this.currentLanguage === 'en' ? 'Current price:' : 'Trenutna cijena:'}</span></strong> ${formatEuroPrice(product.price)}</p>
+                        <p class="price anchor-price"><strong><span data-en="Anchor price (10 September 2026):" data-hr="Sidrena cijena (10. rujna 2026.):">${this.currentLanguage === 'en' ? 'Anchor price (10 September 2026):' : 'Sidrena cijena (10. rujna 2026.):'}</span></strong> ${formatEuroPrice(product.anchor_price_eur)}</p>
                     </div>
                     <button class="inquire-btn" data-product='${JSON.stringify(localizedProduct)}'>
                         ${this.currentLanguage === 'en' ? 'INQUIRE' : 'UPIT'}

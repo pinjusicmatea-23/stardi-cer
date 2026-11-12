@@ -1,0 +1,42 @@
+name: Daily price list update
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-pricelist-update
+  cancel-in-progress: false
+
+jobs:
+  update-pricelist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate current and archived price lists
+        run: python scripts/update_pricelist.py
+
+      - name: Commit and push price lists
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pricelist-latest.csv pricelists/
+          if git diff --cached --quiet; then
+            echo "Price list files are already up to date."
+            exit 0
+          fi
+          git commit -m "Update daily machine-readable price list"
+          git push origin HEAD:main
