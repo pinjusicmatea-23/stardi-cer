@@ -4047,6 +4047,17 @@ button:focus {
     font-family: inherit;
 }
 
+.simple-gallery .product-card .anchor-price {
+    font-size: 0.75rem !important;
+    color: #777 !important;
+    font-weight: 400;
+    margin: 0;
+}
+
+.simple-gallery .product-card .anchor-price strong {
+    font-weight: 400;
+}
+
 .simple-gallery .inquire-btn {
     width: 100%;
     background-color: transparent;
