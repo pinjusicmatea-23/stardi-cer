@@ -4127,6 +4127,12 @@ button:focus {
         flex-shrink: 0; /* Prevent cards from shrinking */
         min-height: auto;
     }
+
+    .simple-gallery .product-card .product-image {
+        height: auto;
+        aspect-ratio: 4 / 3;
+        flex: 0 0 auto;
+    }
     
 }
 
