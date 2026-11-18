@@ -790,6 +790,19 @@ window.addEventListener('load', function() {
     }
 });
 
+// Cookie notice
+const cookieBanner = document.getElementById('cookie-banner');
+const cookieAccept = document.getElementById('cookie-accept');
+if (cookieBanner && !localStorage.getItem('stardi_cookie_consent')) {
+    cookieBanner.classList.add('visible');
+}
+if (cookieAccept) {
+    cookieAccept.addEventListener('click', function() {
+        localStorage.setItem('stardi_cookie_consent', 'accepted');
+        if (cookieBanner) cookieBanner.classList.remove('visible');
+    });
+}
+
 // Add CSS for active navigation state and animations
 const style = document.createElement('style');
 style.textContent = `

@@ -7,7 +7,7 @@
     <link rel="canonical" href="https://stardiceramics.hr/">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
     <link rel="apple-touch-icon" href="/images/STARDI%20LOGO-03_s.png">
-    <link rel="stylesheet" href="css/style.css?v=20261112b">
+    <link rel="stylesheet" href="css/style.css?v=20261118c">
 </head>
 <body>
     <!-- Header Navigation -->
@@ -431,19 +431,8 @@
         <div class="contact-content">
             <div class="contact-info">
                 <div class="contact-item">
-                    <h4 data-en="CONTACT" data-hr="KONTAKT">CONTACT</h4>
-                    <p>stardi.ceramics@gmail.com</p>
-                    <p>+385 99 3195142</p>
-                </div>
-                
-                <div class="contact-item">
                     <h4>SOCIAL</h4>
                     <a href="https://www.instagram.com/stardi.ceramics/" target="_blank" class="social-link">Instagram</a>
-                </div>
-                
-                <div class="contact-item">
-                    <h4 data-en="ADDRESS" data-hr="ADRESA">ADRESA</h4>
-                    <p>Lektrščica 5, Zagreb</p>
                 </div>
                 
                 <div class="contact-item">
@@ -460,17 +449,46 @@
     </section>
 
     <footer class="main-footer">
+        <nav class="footer-nav" aria-label="Legal">
+            <a class="footer-link" href="./terms.html" data-en="Terms of use and ordering" data-hr="Uvjeti korištenja i naručivanja">Uvjeti korištenja i naručivanja</a>
+            <a class="footer-link" href="./pricelists/" data-en="Price list archive" data-hr="Arhiva cjenika">Arhiva cjenika</a>
+        </nav>
         <a
             class="price-list-download"
-            href="/pricelist-latest.csv"
+            href="./pricelist-latest.csv"
             download
             data-en="Download the machine-readable price list (CSV)"
             data-hr="Preuzmite cjenik u strojno čitljivom obliku (CSV)"
         >Preuzmite cjenik u strojno čitljivom obliku (CSV)</a>
+        <div class="footer-impressum">
+            <p data-en="STARDI CERAMICS, craft for production and trade, owner Lidija Pinjušić, Lektrščica 5, Zagreb"
+               data-hr="STARDI CERAMICS, obrt za proizvodnju i trgovinu, vl. Lidija Pinjušić, Lektrščica 5, Zagreb">
+               STARDI CERAMICS, obrt za proizvodnju i trgovinu, vl. Lidija Pinjušić, Lektrščica 5, Zagreb
+            </p>
+            <p>OIB: 61592286959 | MBS: 99117045</p>
+            <p data-en="Competent authority: City Office for Economy, Zagreb"
+               data-hr="Nadležno tijelo: Gradski ured za gospodarstvo, Zagreb">
+               Nadležno tijelo: Gradski ured za gospodarstvo, Zagreb
+            </p>
+            <p>
+                <span data-en="Contact:" data-hr="Kontakt:">Kontakt:</span>
+                <a href="mailto:stardi.ceramics@gmail.com">stardi.ceramics@gmail.com</a> |
+                <span data-en="Phone:" data-hr="Tel:">Tel:</span> 099 319 5142
+            </p>
+        </div>
     </footer>
 
+    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+        <p data-en="This website uses essential cookies and may use third-party services. By continuing, you accept the use of cookies."
+           data-hr="Ova web stranica koristi nužne kolačiće i može koristiti usluge trećih strana. Nastavkom korištenja prihvaćate uporabu kolačića.">
+            Ova web stranica koristi nužne kolačiće i može koristiti usluge trećih strana. Nastavkom korištenja prihvaćate uporabu kolačića.
+        </p>
+        <button id="cookie-accept" type="button"
+            data-en="Accept" data-hr="Prihvati">Prihvati</button>
+    </div>
+
     <script src="js/script.js?v=20261015c"></script>
-    <script src="js/simple-gallery.js?v=20261112a"></script>
+    <script src="js/simple-gallery.js?v=20261118d"></script>
     <!-- EmailJS for sending emails -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">

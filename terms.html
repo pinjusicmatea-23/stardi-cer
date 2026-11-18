@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uvjeti korištenja i naručivanja | STARDI CERAMICS</title>
+    <link rel="stylesheet" href="./css/style.css?v=20261118d">
+</head>
+<body class="legal-page">
+    <main class="legal-content">
+        <div class="legal-language">
+            <button type="button" data-terms-lang="hr" class="active">HR</button>
+            <button type="button" data-terms-lang="en">EN</button>
+        </div>
+
+        <section data-terms-content="hr" lang="hr">
+            <h1>Uvjeti korištenja i naručivanja</h1>
+            <p>Svi proizvodi prikazani na ovoj stranici izrađeni su ručno i svaki je komad jedinstven. Moguća su manja odstupanja u dimenzijama, obliku i boji glazure u odnosu na fotografije i navedene informacije.</p>
+            <p>Cijene na stranici imaju isključivo informativni karakter. Konačna cijena, dostupnost, boja glazure, način isporuke i ostali uvjeti potvrđuju se izravno putem kontakt forme, e-maila ili telefona prije narudžbe.</p>
+            <p>Narudžbe se ne naplaćuju izravno na ovoj stranici. Pojedinosti narudžbe i rok isporuke, koji iznosi obično 5–14 dana, dogovaraju se individualno s kupcem.</p>
+            <h2>Obrada osobnih podataka</h2>
+            <p>Ime i e-mail adresa ili drugi podaci poslani putem kontakt/upitnog obrasca koriste se isključivo za odgovor na upit i komunikaciju vezanu uz narudžbu. Podaci se ne dostavljaju drugim osobama osim uslugama koje tehnički omogućuju slanje poruke.</p>
+        </section>
+
+        <section data-terms-content="en" lang="en" hidden>
+            <h1>Terms of use and ordering</h1>
+            <p>All products shown on this website are handmade, and every piece is unique. Minor differences in dimensions, shape and glaze colour may occur in comparison with photographs and published information.</p>
+            <p>Prices displayed on the website are for informational purposes only. The final price, availability, glaze colour, delivery method and other conditions are confirmed directly through the contact form, email or telephone before placing an order.</p>
+            <p>Orders are not paid for directly on this website. Order details and the delivery timeframe, normally 5–14 days, are agreed individually with the customer.</p>
+            <h2>Personal data processing</h2>
+            <p>Name, email address and any other data submitted through the contact or inquiry form are used solely to respond to the inquiry and for communication relating to an order. Data is not provided to third parties except for services that technically enable message delivery.</p>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-impressum">
+            <p>STARDI CERAMICS, obrt za proizvodnju i trgovinu, vl. Lidija Pinjušić, Lektrščica 5, Zagreb</p>
+            <p>OIB: 61592286959 | MBS: 99117045</p>
+            <p>Nadležno tijelo: Gradski ured za gospodarstvo, Zagreb</p>
+            <p>Kontakt: <a href="mailto:stardi.ceramics@gmail.com">stardi.ceramics@gmail.com</a> | Tel: 099 319 5142</p>
+        </div>
+    </footer>
+
+    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+        <p data-terms-cookie-href>Ova web stranica koristi nužne kolačiće i može koristiti usluge trećih strana. Nastavkom korištenja prihvaćate uporabu kolačića.</p>
+        <button id="cookie-accept" type="button">Prihvati</button>
+    </div>
+
+    <script>
+        document.querySelectorAll('[data-terms-lang]').forEach(button => {
+            button.addEventListener('click', () => {
+                const language = button.dataset.termsLang;
+                document.documentElement.lang = language;
+                document.querySelectorAll('[data-terms-content]').forEach(section => {
+                    section.hidden = section.dataset.termsContent !== language;
+                });
+                document.querySelectorAll('[data-terms-lang]').forEach(item => item.classList.toggle('active', item === button));
+                const cookieText = document.querySelector('[data-terms-cookie-href]');
+                const cookieAccept = document.getElementById('cookie-accept');
+                if (language === 'en') {
+                    cookieText.textContent = 'This website uses essential cookies and may use third-party services. By continuing, you accept the use of cookies.';
+                    cookieAccept.textContent = 'Accept';
+                } else {
+                    cookieText.textContent = 'Ova web stranica koristi nužne kolačiće i može koristiti usluge trećih strana. Nastavkom korištenja prihvaćate uporabu kolačića.';
+                    cookieAccept.textContent = 'Prihvati';
+                }
+            });
+        });
+
+        const cookieBanner = document.getElementById('cookie-banner');
+        if (!localStorage.getItem('stardi_cookie_consent')) cookieBanner.classList.add('visible');
+        document.getElementById('cookie-accept').addEventListener('click', () => {
+            localStorage.setItem('stardi_cookie_consent', 'accepted');
+            cookieBanner.classList.remove('visible');
+        });
+    </script>
+</body>
+</html>

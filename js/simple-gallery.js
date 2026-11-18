@@ -10,6 +10,8 @@ class SimpleGallery {
         this.currentImageIndex = 0;
         this.currentImageFolder = '';
         this.productImageManifest = {};
+        this.loadingComplete = false;
+        this.loadingFailed = false;
         this.init();
     }
 
@@ -27,20 +29,24 @@ class SimpleGallery {
 
     async loadProducts() {
         try {
-            const [productsResponse, imagesResponse] = await Promise.all([
-                fetch('sheets/cijene - sheet1.csv?v=20261112a'),
-                fetch('sheets/product-image-manifest.json?v=20261015c')
-            ]);
+            const productsResponse = await fetch('sheets/cijene - sheet1.csv?v=20261118a');
             if (!productsResponse.ok) throw new Error(`Product sheet request failed (${productsResponse.status})`);
-            if (!imagesResponse.ok) throw new Error(`Product image manifest request failed (${imagesResponse.status})`);
 
-            const [text, imageManifest] = await Promise.all([
-                productsResponse.text(),
-                imagesResponse.json()
-            ]);
-            this.productImageManifest = imageManifest;
+            const text = await productsResponse.text();
             this.products = this.parseCSV(text);
+
+            try {
+                const imagesResponse = await fetch('sheets/product-image-manifest.json?v=20261118a');
+                if (imagesResponse.ok) {
+                    this.productImageManifest = await imagesResponse.json();
+                }
+            } catch (manifestError) {
+                console.warn('Product image manifest could not be loaded:', manifestError);
+            }
+
             this.resolveProductImages();
+            this.loadingComplete = true;
+            this.loadingFailed = false;
 
             if (this.isGalleryOpen && this.currentCategory) {
                 this.openGallery(this.currentCategory);
@@ -49,6 +55,8 @@ class SimpleGallery {
             console.log('Products loaded:', this.products.length);
         } catch (error) {
             console.error('Error loading products:', error);
+            this.loadingComplete = true;
+            this.loadingFailed = true;
             if (this.isGalleryOpen) {
                 const gridElement = document.getElementById('gallery-grid');
                 if (gridElement) {
@@ -216,6 +224,16 @@ class SimpleGallery {
                         <div class="form-group">
                             <label class="message-label" for="email-message">Message:</label>
                             <textarea id="email-message" name="message" required rows="4" placeholder="Enter your message here..."></textarea>
+                        </div>
+                        <div class="form-group privacy-consent">
+                            <label for="email-consent">
+                                <input id="email-consent" type="checkbox" name="privacyConsent" required>
+                                <span class="privacy-consent-text"
+                                    data-en="I consent to the processing of my personal data for the purpose of responding to this inquiry."
+                                    data-hr="Pristajem na obradu osobnih podataka u svrhu odgovora na ovaj upit.">
+                                    Pristajem na obradu osobnih podataka u svrhu odgovora na ovaj upit.
+                                </span>
+                            </label>
                         </div>
                         <div class="form-buttons">
                             <button type="button" class="send-btn">Send</button>
@@ -473,9 +491,16 @@ class SimpleGallery {
         const formData = new FormData(form);
         const email = formData.get('email');
         const message = formData.get('message');
+        const privacyConsent = formData.get('privacyConsent');
         
         if (!email || !message) {
             alert(this.currentLanguage === 'hr' ? 'Molimo unesite sve potrebne podatke.' : 'Please fill in all required fields.');
+            return;
+        }
+        if (!privacyConsent) {
+            alert(this.currentLanguage === 'hr'
+                ? 'Molimo potvrdite pristanak na obradu osobnih podataka.'
+                : 'Please confirm your consent to the processing of personal data.');
             return;
         }
         
@@ -569,9 +594,19 @@ class SimpleGallery {
         this.isGalleryOpen = true;
         
         // Check if products are loaded yet
-        if (!this.products || this.products.length === 0) {
+        if (!this.loadingComplete) {
             console.log('Products not loaded yet, showing loading message...');
             this.showLoadingMessage(category);
+            return;
+        }
+        if (this.loadingFailed) {
+            const gridElement = document.getElementById('gallery-grid');
+            if (gridElement) {
+                gridElement.innerHTML = `<p class="empty-category-message">${this.currentLanguage === 'en' ? 'Products could not be loaded. Please try again later.' : 'Proizvode nije moguće učitati. Pokušajte ponovno kasnije.'}</p>`;
+            }
+            const gallery = document.getElementById('simple-gallery');
+            gallery.classList.add('active');
+            document.body.style.overflow = 'hidden';
             return;
         }
         
@@ -703,7 +738,7 @@ class SimpleGallery {
                         <p><strong>${this.currentLanguage === 'en' ? 'Material:' : 'Materijal:'}</strong> ${this.currentLanguage === 'en' ? product.material : product.materijal}</p>
                         <p><strong>${this.currentLanguage === 'en' ? 'Size:' : 'Veličina:'}</strong> ${product.size}</p>
                         <p class="price"><strong><span data-en="Current price:" data-hr="Trenutna cijena:">${this.currentLanguage === 'en' ? 'Current price:' : 'Trenutna cijena:'}</span></strong> ${formatEuroPrice(product.price)}</p>
-                        <p class="price anchor-price"><strong><span data-en="Anchor price (10 September 2026):" data-hr="Sidrena cijena (10. rujna 2026.):">${this.currentLanguage === 'en' ? 'Anchor price (10 September 2026):' : 'Sidrena cijena (10. rujna 2026.):'}</span></strong> ${formatEuroPrice(product.anchor_price_eur)}</p>
+                        <p class="price anchor-price"><strong><span data-en="Base price (10 September 2026):" data-hr="Bazna cijena (10. rujna 2026.):">${this.currentLanguage === 'en' ? 'Base price (10 September 2026):' : 'Bazna cijena (10. rujna 2026.):'}</span></strong> ${formatEuroPrice(product.anchor_price_eur)}</p>
                     </div>
                     <button class="inquire-btn" data-product='${JSON.stringify(localizedProduct)}'>
                         ${this.currentLanguage === 'en' ? 'INQUIRE' : 'UPIT'}
