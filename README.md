@@ -39,9 +39,13 @@ stardi/
 ## Machine-readable price list
 
 The current price list is published at `/pricelist-latest.csv`, with dated copies and
-a browsable archive at `/pricelists/`. The daily GitHub Actions workflow rebuilds
-these files from `sheets/cijene - sheet1.csv`, retains archive files for at least
-30 days, and commits the results to `main`.
+a browsable archive at `/pricelists/`. The GitHub Actions workflow can be dispatched
+by the configured cron-job.org job; it rebuilds these files from
+`sheets/cijene - sheet1.csv`, retains archive files for at least 30 days, and commits
+the results to `main`. The workflow has no built-in schedule, avoiding a duplicate
+daily run.
+
+The exported CSV uses `bazna_cijena_eur` for the Croatian “Bazna cijena” column.
 
 Archive filenames include the sales method (`prodaja-po-narudzbi`), outlet address,
 outlet identifier (`STARDI-01`), storage number (`01`), and a UTC date/time

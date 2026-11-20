@@ -23,7 +23,7 @@ ARCHIVE_PATTERN = re.compile(
 OUTPUT_FIELDS = (
     "item_name",
     "current_price_eur",
-    "anchor_price_eur",
+    "bazna_cijena_eur",
     "last_updated",
 )
 
@@ -62,7 +62,7 @@ def load_products():
                 {
                     "item_name": name,
                     "current_price_eur": parse_price(row["price"], row_number, "price"),
-                    "anchor_price_eur": parse_price(
+                    "bazna_cijena_eur": parse_price(
                         row["anchor_price_eur"], row_number, "anchor_price_eur"
                     ),
                 }

@@ -1,8 +1,6 @@
 name: Daily price list update
 
 on:
-  schedule:
-    - cron: "30 6 * * *"
   workflow_dispatch:
 
 permissions:
